@@ -34,9 +34,23 @@ NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ```
 
+## Troubleshooting auth
+
+If **signup or signin hangs** and **no user appears in Authentication > Users**, it is almost always one of these three:
+
+1. **A trigger on `auth.users` is throwing and rolling back the transaction.** This is what happened on the first deploy. `0001_init.sql` has since been hardened and `0002_signup_hardening.sql` patches existing projects. Run it once in the SQL editor:
+   ```sql
+   \i supabase/migrations/0002_signup_hardening.sql
+   ```
+   The patched `handle_new_auth_user` wraps the profile insert in `BEGIN/EXCEPTION` so it can never abort `auth.users` creation again. Any failure is logged as a Postgres `NOTICE` and the client-side `ensureMyProfile()` picks up the slack on the next page load.
+2. **`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` are missing or still placeholders** on Vercel. The signup and signin forms now throw and surface this inline instead of hanging.
+3. **"Confirm email" is enabled** in Supabase Authentication → Providers → Email. With that on, `signUp` returns a user but no session; the app now shows a "Check your inbox" screen instead of looping through the middleware redirect.
+
+Every auth error is printed to the browser console (`signUp error:` / `signInWithPassword error:`) and shown as an inline `notice` on the form — no more silent hangs.
+
 ## Database
 
-Create a new Supabase project, open the SQL editor and run `supabase/migrations/0001_init.sql`. The migration sets up:
+Create a new Supabase project, open the SQL editor and run `supabase/migrations/0001_init.sql`. If you already deployed before the auth hardening, also run `supabase/migrations/0002_signup_hardening.sql`. The migration sets up:
 
 | Table             | Purpose                                                       |
 | ----------------- | ------------------------------------------------------------- |

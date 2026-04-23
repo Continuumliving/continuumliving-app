@@ -71,20 +71,28 @@ create trigger profiles_immutable_fields
   before update on profiles
   for each row execute function enforce_profiles_immutable();
 
--- Auto-create profile on auth signup using user_metadata
+-- Auto-create profile on auth signup using user_metadata.
+-- The insert is wrapped in an EXCEPTION block so a profile failure
+-- never rolls back the auth.users insert. The client-side
+-- ensureMyProfile() fallback will retry on first app load.
 create or replace function handle_new_auth_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into profiles (id, first_name, last_name, email, development, unit_number)
-  values (
-    new.id,
-    coalesce(new.raw_user_meta_data ->> 'first_name', ''),
-    coalesce(new.raw_user_meta_data ->> 'last_name', ''),
-    new.email,
-    (coalesce(new.raw_user_meta_data ->> 'development', 'almina'))::development_id,
-    coalesce(new.raw_user_meta_data ->> 'unit_number', '')
-  )
-  on conflict (id) do nothing;
+  begin
+    insert into profiles (id, first_name, last_name, email, development, unit_number)
+    values (
+      new.id,
+      coalesce(new.raw_user_meta_data ->> 'first_name', ''),
+      coalesce(new.raw_user_meta_data ->> 'last_name', ''),
+      coalesce(new.email, ''),
+      (coalesce(nullif(new.raw_user_meta_data ->> 'development', ''), 'almina'))::development_id,
+      coalesce(new.raw_user_meta_data ->> 'unit_number', '')
+    )
+    on conflict (id) do nothing;
+  exception when others then
+    raise notice 'handle_new_auth_user: profile insert failed for %: % (%).',
+      new.id, sqlerrm, sqlstate;
+  end;
   return new;
 end;
 $$;
