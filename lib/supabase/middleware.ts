@@ -39,6 +39,7 @@ export async function updateSession(request: NextRequest) {
   const isPublic =
     isAuthPage ||
     pathname === "/offline" ||
+    pathname === "/env-check" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/icon") ||
     pathname.startsWith("/apple-icon") ||

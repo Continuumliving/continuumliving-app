@@ -53,11 +53,11 @@ export default function SignUpPage() {
         supabase = getBrowserClient();
       } catch (envErr) {
         console.error(envErr);
-        setStatus({
-          kind: "error",
-          message:
-            "Supabase is not configured. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
-        });
+        const msg =
+          envErr instanceof Error
+            ? envErr.message
+            : "Supabase is not configured on this deploy.";
+        setStatus({ kind: "error", message: msg });
         return;
       }
 

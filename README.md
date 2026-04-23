@@ -34,6 +34,18 @@ NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ```
 
+## Deploying to Vercel (env-var checklist)
+
+`NEXT_PUBLIC_*` variables in Next.js are **inlined at build time**. Setting them in Vercel *after* a deploy has no effect until you redeploy. If the signup form says _"Missing env at build time"_, this is the cause.
+
+1. Vercel → your project → **Settings → Environment Variables**.
+2. Add two entries:
+   - `NEXT_PUBLIC_SUPABASE_URL` = `https://<your-project>.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the anon public key from Supabase → Project Settings → API (it starts with `ey…` and is a JWT).
+3. Tick **Production** (and Preview, if you want PR deploys to work).
+4. Go to **Deployments** → latest → ⋯ → **Redeploy** (not "Rollback", not "Open"). The variables are only baked into builds after you redeploy.
+5. Open `https://<your-app>/env-check` to verify. Both Server and Client sections should show the mask (e.g. `https:…e.co`) and "looks like Supabase URL ✓" / "looks like JWT ✓". If a value reads `(missing)` the redeploy didn't pick it up — check scope (Production vs Preview) and try again.
+
 ## Troubleshooting auth
 
 If **signup or signin hangs** and **no user appears in Authentication > Users**, it is almost always one of these three:

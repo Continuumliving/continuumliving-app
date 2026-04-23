@@ -28,9 +28,11 @@ export function SignInForm() {
         supabase = getBrowserClient();
       } catch (envErr) {
         console.error(envErr);
-        setErrorMsg(
-          "Supabase is not configured. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
-        );
+        const msg =
+          envErr instanceof Error
+            ? envErr.message
+            : "Supabase is not configured on this deploy.";
+        setErrorMsg(msg);
         return;
       }
       const { data, error } = await supabase.auth.signInWithPassword({
