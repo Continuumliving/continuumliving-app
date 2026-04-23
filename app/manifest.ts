@@ -1,0 +1,20 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Continuum Living · The Residency",
+    short_name: "Continuum",
+    description:
+      "A quietly held standard. Classes, events, and membership for residents of Almina and Alcántara del Mar.",
+    display: "standalone",
+    orientation: "portrait",
+    start_url: "/today",
+    scope: "/",
+    background_color: "#f5f1ea",
+    theme_color: "#1a1817",
+    icons: [
+      { src: "/icon", sizes: "any", type: "image/svg+xml" },
+      { src: "/apple-icon", sizes: "180x180", type: "image/png" },
+    ],
+  };
+}
