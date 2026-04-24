@@ -62,7 +62,7 @@ export default async function TodayPage() {
           <>
             {greeting()},
             <br />
-            <em>{profile.first_name}.</em>
+            <em>Mr {profile.first_name}.</em>
           </>
         }
       />
