@@ -139,7 +139,17 @@ export default async function AccountPage() {
         <div className="eyebrow" style={{ marginBottom: 10 }}>
           — Preferences
         </div>
-        <Row staticRow title={<span className="body-sm">Concierge, direct</span>} aside="WhatsApp" />
+        <a
+          href="https://wa.me/+34609019874"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="row accent"
+        >
+          <div className="row-main">
+            <span className="body-sm">Concierge, direct</span>
+          </div>
+          <div className="row-aside">WhatsApp</div>
+        </a>
         <Row
           staticRow
           title={<span className="body-sm">Dietary & health notes</span>}

@@ -68,9 +68,9 @@ export default async function TodayPage() {
       />
 
       <HeroQuote>
-        True luxury is not a product.
+        Almina Residence — the new standard
         <br />
-        It is a standard, quietly held.
+        for luxury living.
       </HeroQuote>
 
       <div className="section-lead">
