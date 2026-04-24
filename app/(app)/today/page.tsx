@@ -65,7 +65,7 @@ export default async function TodayPage() {
           <>
             {greeting()},
             <br />
-            <em>Mr {displayFirst}.</em>
+            <em>{displayFirst}.</em>
           </>
         }
       />
