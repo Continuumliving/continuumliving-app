@@ -1,12 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Development, ProfileRow } from "./types";
 
-export async function fetchMyProfile(
+async function selectProfileById(
   supabase: SupabaseClient,
+  uid: string,
 ): Promise<ProfileRow | null> {
-  const { data: auth } = await supabase.auth.getUser();
-  const uid = auth.user?.id;
-  if (!uid) return null;
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -14,6 +12,15 @@ export async function fetchMyProfile(
     .maybeSingle();
   if (error) throw error;
   return (data ?? null) as ProfileRow | null;
+}
+
+export async function fetchMyProfile(
+  supabase: SupabaseClient,
+): Promise<ProfileRow | null> {
+  const { data: auth } = await supabase.auth.getUser();
+  const uid = auth.user?.id;
+  if (!uid) return null;
+  return selectProfileById(supabase, uid);
 }
 
 function firstNameFromMetadata(
@@ -42,9 +49,13 @@ function firstNameFromMetadata(
  */
 export async function ensureMyProfile(
   supabase: SupabaseClient,
+  prefetchedUser?: User | null,
 ): Promise<ProfileRow | null> {
-  const { data: auth } = await supabase.auth.getUser();
-  const user = auth.user;
+  let user: User | null = prefetchedUser ?? null;
+  if (!user) {
+    const { data: auth } = await supabase.auth.getUser();
+    user = auth.user ?? null;
+  }
   if (!user) return null;
 
   const md = (user.user_metadata ?? {}) as Record<string, unknown>;
@@ -57,7 +68,7 @@ export async function ensureMyProfile(
   const metadataUnit =
     typeof md.unit_number === "string" ? md.unit_number.trim() : "";
 
-  const existing = await fetchMyProfile(supabase);
+  const existing = await selectProfileById(supabase, user.id);
   if (existing) {
     // Patch empty/missing fields from auth metadata so legacy profiles
     // (created before the trigger was hardened) self-heal.

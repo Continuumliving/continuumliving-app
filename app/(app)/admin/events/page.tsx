@@ -3,13 +3,13 @@ import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 import { HeroNameCard } from "@/components/HeroNameCard";
 import { EventCard } from "@/components/EventCard";
-import { getServerClient } from "@/lib/supabase/server";
+import { getRequestClient } from "@/lib/auth-cache";
 import type { EventRow } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminEventsPage() {
-  const supabase = getServerClient();
+  const supabase = getRequestClient();
   const { data, error } = await supabase
     .from("events")
     .select("*")

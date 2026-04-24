@@ -1,12 +1,12 @@
 import { HeroNameCard } from "@/components/HeroNameCard";
 import { EventCard } from "@/components/EventCard";
-import { getServerClient } from "@/lib/supabase/server";
+import { getRequestClient } from "@/lib/auth-cache";
 import { fetchAllEvents, fetchMyRsvps } from "@/lib/events";
 
 export const dynamic = "force-dynamic";
 
 export default async function EventsPage() {
-  const supabase = getServerClient();
+  const supabase = getRequestClient();
   const [events, rsvps] = await Promise.all([
     fetchAllEvents(supabase),
     fetchMyRsvps(supabase),

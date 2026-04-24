@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 import { HeroNameCard } from "@/components/HeroNameCard";
-import { getServerClient } from "@/lib/supabase/server";
+import { getRequestClient } from "@/lib/auth-cache";
 import { DAY_NAMES } from "@/lib/format";
 import type { ClassRow } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminClassesPage() {
-  const supabase = getServerClient();
+  const supabase = getRequestClient();
   const { data, error } = await supabase
     .from("classes")
     .select("*")

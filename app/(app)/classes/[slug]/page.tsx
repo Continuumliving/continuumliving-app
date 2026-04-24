@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { ClassDetailView } from "@/components/ClassDetailView";
-import { getServerClient } from "@/lib/supabase/server";
-import { fetchMyProfile } from "@/lib/profile";
+import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
 import { findBookingForClass } from "@/lib/bookings";
 import { nextOccurrenceISO } from "@/lib/dates";
 import { parseClassSlug } from "@/lib/format";
@@ -16,9 +15,9 @@ export default async function ClassDetailPage({
   const parsed = parseClassSlug(params.slug);
   if (!parsed) notFound();
 
-  const supabase = getServerClient();
-  const profile = await fetchMyProfile(supabase);
+  const profile = await getCurrentProfile();
   if (!profile) redirect("/signin");
+  const supabase = getRequestClient();
 
   const { data: cls, error } = await supabase
     .from("classes")

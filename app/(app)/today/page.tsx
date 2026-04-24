@@ -4,8 +4,7 @@ import { HeroQuote } from "@/components/HeroQuote";
 import { StatGrid, StatRow } from "@/components/StatGrid";
 import { SessionCard } from "@/components/SessionCard";
 import { Row } from "@/components/Row";
-import { getServerClient } from "@/lib/supabase/server";
-import { fetchMyProfile } from "@/lib/profile";
+import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
 import { fetchAllClasses } from "@/lib/classes";
 import { fetchMyBookings, fetchMySessionHistory, countSessions } from "@/lib/bookings";
 import { fetchAllEvents, fetchMyRsvps } from "@/lib/events";
@@ -21,9 +20,9 @@ import { classSlug, MONTH_SHORT } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export default async function TodayPage() {
-  const supabase = getServerClient();
-  const profile = await fetchMyProfile(supabase);
+  const profile = await getCurrentProfile();
   if (!profile) redirect("/signin");
+  const supabase = getRequestClient();
 
   const [classes, bookings, history, events, rsvps] = await Promise.all([
     fetchAllClasses(supabase),

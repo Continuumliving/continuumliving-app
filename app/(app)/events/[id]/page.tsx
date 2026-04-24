@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { EventDetailView } from "@/components/EventDetailView";
-import { getServerClient } from "@/lib/supabase/server";
+import { getRequestClient } from "@/lib/auth-cache";
 import { fetchEventById, fetchMyRsvps, fetchRsvpCounts } from "@/lib/events";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export default async function EventDetailPage({
 }: {
   params: { id: string };
 }) {
-  const supabase = getServerClient();
+  const supabase = getRequestClient();
   const event = await fetchEventById(supabase, params.id);
   if (!event) notFound();
 

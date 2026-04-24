@@ -4,8 +4,7 @@ import { AccountHero } from "@/components/AccountHero";
 import { Row } from "@/components/Row";
 import { SignOutButton } from "@/components/SignOutButton";
 import { StatGrid, StatRow } from "@/components/StatGrid";
-import { getServerClient } from "@/lib/supabase/server";
-import { fetchMyProfile } from "@/lib/profile";
+import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
 import {
   fetchMyBookingsWithClass,
   fetchMySessionHistory,
@@ -18,9 +17,9 @@ import { DEVELOPMENTS } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
-  const supabase = getServerClient();
-  const profile = await fetchMyProfile(supabase);
+  const profile = await getCurrentProfile();
   if (!profile) redirect("/signin");
+  const supabase = getRequestClient();
 
   const [bookings, history, rsvps] = await Promise.all([
     fetchMyBookingsWithClass(supabase),

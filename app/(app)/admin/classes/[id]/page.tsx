@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { AdminClassForm } from "@/components/AdminClassForm";
 import { BackButton } from "@/components/BackButton";
 import { HeroNameCard } from "@/components/HeroNameCard";
-import { getServerClient } from "@/lib/supabase/server";
+import { getRequestClient } from "@/lib/auth-cache";
 import type { ClassRow } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export default async function EditClassPage({
 }: {
   params: { id: string };
 }) {
-  const supabase = getServerClient();
+  const supabase = getRequestClient();
   const { data, error } = await supabase
     .from("classes")
     .select("*")
