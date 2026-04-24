@@ -54,6 +54,9 @@ export default async function TodayPage() {
   const joinedMonth =
     MONTH_SHORT[new Date(profile.joined_at).getUTCMonth()] ?? MONTH_SHORT[0];
 
+  const displayFirst =
+    (profile.first_name && profile.first_name.trim()) || "Resident";
+
   return (
     <div className="screen">
       <HeroNameCard
@@ -62,7 +65,7 @@ export default async function TodayPage() {
           <>
             {greeting()},
             <br />
-            <em>Mr {profile.first_name}.</em>
+            <em>Mr {displayFirst}.</em>
           </>
         }
       />
