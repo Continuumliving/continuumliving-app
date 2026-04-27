@@ -1,16 +1,12 @@
+"use client";
+
 import { HeroNameCard } from "@/components/HeroNameCard";
 import { EventCard } from "@/components/EventCard";
-import { getRequestClient } from "@/lib/auth-cache";
-import { fetchAllEvents, fetchMyRsvps } from "@/lib/events";
+import { useEvents, useRsvps } from "@/lib/data-context";
 
-export const dynamic = "force-dynamic";
-
-export default async function EventsPage() {
-  const supabase = getRequestClient();
-  const [events, rsvps] = await Promise.all([
-    fetchAllEvents(supabase),
-    fetchMyRsvps(supabase),
-  ]);
+export default function EventsPage() {
+  const events = useEvents();
+  const rsvps = useRsvps();
   const rsvpSet = new Set(rsvps.map((r) => r.event_id));
 
   return (

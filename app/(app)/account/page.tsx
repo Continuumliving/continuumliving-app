@@ -1,40 +1,41 @@
-import { redirect } from "next/navigation";
+"use client";
+
 import Link from "next/link";
 import { AccountHero } from "@/components/AccountHero";
 import { Row } from "@/components/Row";
 import { SignOutButton } from "@/components/SignOutButton";
 import { StatGrid, StatRow } from "@/components/StatGrid";
-import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
 import {
-  fetchMyBookingsWithClass,
-  fetchMySessionHistory,
-  countSessions,
-} from "@/lib/bookings";
-import { fetchMyRsvps } from "@/lib/events";
+  useBookings,
+  useClasses,
+  useHistory,
+  useProfile,
+  useRsvps,
+} from "@/lib/data-context";
+import { countSessions } from "@/lib/bookings";
 import { DAY_SHORT, MONTH_SHORT } from "@/lib/format";
 import { DEVELOPMENTS } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
+export default function AccountPage() {
+  const profile = useProfile();
+  const bookings = useBookings();
+  const history = useHistory();
+  const rsvps = useRsvps();
+  const classes = useClasses();
 
-export default async function AccountPage() {
-  const profile = await getCurrentProfile();
-  if (!profile) redirect("/signin");
-  const supabase = getRequestClient();
-
-  const [bookings, history, rsvps] = await Promise.all([
-    fetchMyBookingsWithClass(supabase),
-    fetchMySessionHistory(supabase),
-    fetchMyRsvps(supabase),
-  ]);
+  if (!profile) return null;
 
   const counts = countSessions(history);
   const dev = DEVELOPMENTS[profile.development];
   const joined = new Date(profile.joined_at);
   const memberSince = `${MONTH_SHORT[joined.getUTCMonth()]} ${joined.getUTCFullYear()}`;
 
+  const today = new Date().toISOString().slice(0, 10);
+  const classById = new Map(classes.map((c) => [c.id, c]));
   const upcomingBookings = bookings
-    .filter((b) => b.session_date >= new Date().toISOString().slice(0, 10))
-    .sort((a, b) => a.session_date.localeCompare(b.session_date));
+    .filter((b) => b.session_date >= today)
+    .sort((a, b) => a.session_date.localeCompare(b.session_date))
+    .map((b) => ({ booking: b, cls: classById.get(b.class_id) }));
 
   return (
     <div className="screen">
@@ -70,9 +71,7 @@ export default async function AccountPage() {
           <span className="activity-value">{counts.high}</span>
         </div>
         <div className="activity-row">
-          <span className="activity-label olive">
-            Low intensity completed
-          </span>
+          <span className="activity-label olive">Low intensity completed</span>
           <span className="activity-value">{counts.low}</span>
         </div>
         <div className="activity-row">
@@ -90,19 +89,20 @@ export default async function AccountPage() {
           <div className="eyebrow" style={{ marginBottom: 14 }}>
             — Upcoming bookings
           </div>
-          {upcomingBookings.map((b) => {
-            const dayName = DAY_SHORT[b.class.day];
+          {upcomingBookings.map(({ booking, cls }) => {
+            if (!cls) return null;
+            const dayName = DAY_SHORT[cls.day];
             return (
               <Row
-                key={b.id}
+                key={booking.id}
                 accent="terracotta"
-                title={b.class.title}
-                subtitle={b.class.venue}
+                title={cls.title}
+                subtitle={cls.venue}
                 aside={
                   <>
                     {dayName}
                     <br />
-                    <span className="row-time">{b.class.time}</span>
+                    <span className="row-time">{cls.time}</span>
                   </>
                 }
               />
@@ -163,7 +163,12 @@ export default async function AccountPage() {
 
       {profile.role === "admin" ? (
         <div style={{ marginTop: 28 }}>
-          <Link href="/admin" className="btn btn-ghost" style={{ display: "block" }}>
+          <Link
+            href="/admin"
+            prefetch
+            className="btn btn-ghost"
+            style={{ display: "block" }}
+          >
             Open admin panel
           </Link>
         </div>

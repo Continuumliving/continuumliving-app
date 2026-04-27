@@ -1,13 +1,19 @@
-import { redirect } from "next/navigation";
+"use client";
+
 import { HeroNameCard } from "@/components/HeroNameCard";
 import { HeroQuote } from "@/components/HeroQuote";
 import { StatGrid, StatRow } from "@/components/StatGrid";
 import { SessionCard } from "@/components/SessionCard";
 import { Row } from "@/components/Row";
-import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
-import { fetchAllClasses } from "@/lib/classes";
-import { fetchMyBookings, fetchMySessionHistory, countSessions } from "@/lib/bookings";
-import { fetchAllEvents, fetchMyRsvps } from "@/lib/events";
+import {
+  useBookings,
+  useClasses,
+  useEvents,
+  useHistory,
+  useProfile,
+  useRsvps,
+} from "@/lib/data-context";
+import { countSessions } from "@/lib/bookings";
 import { DEVELOPMENTS } from "@/lib/types";
 import {
   formatShortDate,
@@ -17,20 +23,15 @@ import {
 } from "@/lib/dates";
 import { classSlug, MONTH_SHORT } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export default function TodayPage() {
+  const profile = useProfile();
+  const classes = useClasses();
+  const bookings = useBookings();
+  const history = useHistory();
+  const events = useEvents();
+  const rsvps = useRsvps();
 
-export default async function TodayPage() {
-  const profile = await getCurrentProfile();
-  if (!profile) redirect("/signin");
-  const supabase = getRequestClient();
-
-  const [classes, bookings, history, events, rsvps] = await Promise.all([
-    fetchAllClasses(supabase),
-    fetchMyBookings(supabase),
-    fetchMySessionHistory(supabase),
-    fetchAllEvents(supabase),
-    fetchMyRsvps(supabase),
-  ]);
+  if (!profile) return null;
 
   const today = madridDayOfWeek();
   const tomorrow = (today + 1) % 7;
@@ -46,7 +47,6 @@ export default async function TodayPage() {
   const bookedKeys = new Set(
     bookings.map((b) => `${b.class_id}-${b.session_date}`),
   );
-
   const isBookedToday = (classId: string) =>
     bookedKeys.has(`${classId}-${todayMadridISO()}`);
 
@@ -159,4 +159,3 @@ export default async function TodayPage() {
     </div>
   );
 }
-

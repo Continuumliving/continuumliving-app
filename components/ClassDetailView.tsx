@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BackButton } from "./BackButton";
 import { SpecRow } from "./SpecRow";
 import { useToast } from "./Toast";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { bookClass, cancelBooking, findBookingForClass } from "@/lib/bookings";
+import { useDataMutations } from "@/lib/data-context";
 import { formatLongDate, nextOccurrenceISO } from "@/lib/dates";
 import type { ClassRow, Development } from "@/lib/types";
 import { DEVELOPMENTS } from "@/lib/types";
@@ -22,8 +22,8 @@ export function ClassDetailView({
   initialBookingId,
   development,
 }: ClassDetailViewProps) {
-  const router = useRouter();
   const toast = useToast();
+  const { addBooking, removeBooking } = useDataMutations();
   const [bookingId, setBookingId] = useState<string | null>(initialBookingId);
   const [busy, setBusy] = useState(false);
 
@@ -39,15 +39,18 @@ export function ClassDetailView({
         sessionDate,
       });
       setBookingId(row.id);
+      addBooking(row);
       toast("Reserved. We will see you there.");
-      router.refresh();
     } catch (err) {
       const msg = (err as Error).message || "";
       if (msg.includes("duplicate") || msg.includes("unique")) {
         toast("You are already booked for this session.");
         const supabase = getBrowserClient();
         const existing = await findBookingForClass(supabase, cls.id, sessionDate);
-        if (existing) setBookingId(existing.id);
+        if (existing) {
+          setBookingId(existing.id);
+          addBooking(existing);
+        }
       } else {
         toast("We could not hold that session just now.");
       }
@@ -58,13 +61,14 @@ export function ClassDetailView({
 
   async function cancel() {
     if (!bookingId) return;
+    const id = bookingId;
     setBusy(true);
     try {
       const supabase = getBrowserClient();
-      await cancelBooking(supabase, bookingId);
+      await cancelBooking(supabase, id);
       setBookingId(null);
+      removeBooking(id);
       toast("Booking released.");
-      router.refresh();
     } catch {
       toast("We could not release that booking just now.");
     } finally {

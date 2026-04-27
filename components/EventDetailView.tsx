@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BackButton } from "./BackButton";
 import { SpecRow } from "./SpecRow";
 import { useToast } from "./Toast";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { cancelRsvp, rsvpEvent } from "@/lib/events";
+import { useDataMutations } from "@/lib/data-context";
 import { formatLongDate } from "@/lib/dates";
 import type { EventKind, EventRow } from "@/lib/types";
 
@@ -29,8 +29,8 @@ export function EventDetailView({
   initialRsvpId,
   rsvpCount,
 }: EventDetailViewProps) {
-  const router = useRouter();
   const toast = useToast();
+  const { addRsvp, removeRsvp } = useDataMutations();
   const [rsvpId, setRsvpId] = useState<string | null>(initialRsvpId);
   const [count, setCount] = useState(rsvpCount);
   const [busy, setBusy] = useState(false);
@@ -45,8 +45,8 @@ export function EventDetailView({
       const row = await rsvpEvent(supabase, event.id);
       setRsvpId(row.id);
       setCount((c) => c + 1);
+      addRsvp(row);
       toast("Added. We will confirm details the day before.");
-      router.refresh();
     } catch (err) {
       const msg = (err as Error).message || "";
       if (msg.includes("capacity")) {
@@ -63,14 +63,15 @@ export function EventDetailView({
 
   async function remove() {
     if (!rsvpId) return;
+    const id = rsvpId;
     setBusy(true);
     try {
       const supabase = getBrowserClient();
-      await cancelRsvp(supabase, rsvpId);
+      await cancelRsvp(supabase, id);
       setRsvpId(null);
       setCount((c) => Math.max(0, c - 1));
+      removeRsvp(id);
       toast("Your name has been removed.");
-      router.refresh();
     } catch {
       toast("We could not remove your name just now.");
     } finally {
