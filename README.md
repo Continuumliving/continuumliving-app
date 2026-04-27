@@ -1,6 +1,6 @@
 # Continuum Living
 
-A mobile-first PWA for residents of **Almina Residences** (Estepona) and **Alcántara del Mar** (San Pedro de Alcántara). Sign in, book a class from the weekly programme, RSVP to curated gatherings, and track your season.
+A mobile-first PWA for residents of **Almina Residence** in Estepona. Sign in, book a class from the weekly programme, RSVP to curated gatherings, and track your season.
 
 Designed in an editorial register — Cormorant Garamond serif, Inter sans, 0.5px hairlines, no shadows, no gradients. Built with Next.js, Tailwind and Supabase.
 
@@ -66,7 +66,7 @@ Create a new Supabase project, open the SQL editor and run `supabase/migrations/
 
 | Table             | Purpose                                                       |
 | ----------------- | ------------------------------------------------------------- |
-| `developments`    | Almina + Alcántara metadata                                   |
+| `developments`    | Almina Residence metadata                                     |
 | `profiles`        | One row per auth user, carries first/last name, unit, role    |
 | `classes`         | The weekly programme (10 seeded)                              |
 | `bookings`        | Per-resident class reservations                               |

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Continuum Living · The Residency",
     short_name: "Continuum",
     description:
-      "A quietly held standard. Classes, events, and membership for residents of Almina and Alcántara del Mar.",
+      "A quietly held standard. Classes, events, and membership for residents of Almina Residence, Estepona.",
     display: "standalone",
     orientation: "portrait",
     start_url: "/today",

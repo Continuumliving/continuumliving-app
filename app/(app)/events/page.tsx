@@ -25,7 +25,7 @@ export default async function EventsPage() {
             <em style={{ color: "var(--olive)" }}>each year.</em>
           </>
         }
-        intro="Curated evenings and excursions for Continuum residents across Almina and Alcántara. Small numbers, careful details."
+        intro="Curated evenings and excursions for Almina Residence. Small numbers, careful details."
       />
 
       <div style={{ marginTop: 20 }}>

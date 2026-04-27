@@ -81,15 +81,15 @@ export interface SessionHistoryRow {
 export const DEVELOPMENTS: Record<Development, DevelopmentRow> = {
   almina: {
     id: "almina",
-    name: "Almina Residences",
+    name: "Almina Residence",
     location: "Estepona",
     series: "Series One",
     accent: "terracotta",
   },
   alcantara: {
     id: "alcantara",
-    name: "Alcántara del Mar",
-    location: "San Pedro de Alcántara",
+    name: "Almina Residence",
+    location: "Estepona",
     series: "Series One",
     accent: "olive",
   },

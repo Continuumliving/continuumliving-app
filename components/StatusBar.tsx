@@ -23,7 +23,7 @@ export function StatusBar() {
       <span className="center">
         CONTINUUM<em> · </em>LIVING
       </span>
-      <span>100%</span>
+      <span aria-hidden />
     </div>
   );
 }

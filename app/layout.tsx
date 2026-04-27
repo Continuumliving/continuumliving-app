@@ -20,7 +20,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Continuum Living · The Residency",
   description:
-    "A quietly held standard. Classes, events, and membership for residents of Almina and Alcántara del Mar.",
+    "A quietly held standard. Classes, events, and membership for residents of Almina Residence, Estepona.",
   applicationName: "Continuum",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
