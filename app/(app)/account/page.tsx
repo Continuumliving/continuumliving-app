@@ -169,7 +169,7 @@ export default function AccountPage() {
             className="btn btn-ghost"
             style={{ display: "block" }}
           >
-            Open admin panel
+            Admin
           </Link>
         </div>
       ) : null}

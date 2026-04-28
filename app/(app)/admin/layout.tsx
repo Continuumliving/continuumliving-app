@@ -9,6 +9,6 @@ export default async function AdminLayout({
 }) {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/signin");
-  if (!isAdmin(profile)) redirect("/account");
+  if (!isAdmin(profile)) redirect("/today");
   return <>{children}</>;
 }

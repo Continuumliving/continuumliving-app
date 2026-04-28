@@ -25,6 +25,7 @@ export function AdminClassForm({ initial }: AdminClassFormProps) {
   const [durationMin, setDurationMin] = useState<number>(
     initial?.duration_min ?? 60,
   );
+  const [capacity, setCapacity] = useState<number>(initial?.capacity ?? 20);
   const [description, setDescription] = useState<string>(
     initial?.description ?? "",
   );
@@ -47,6 +48,7 @@ export function AdminClassForm({ initial }: AdminClassFormProps) {
         intensity,
         coach: coach.trim(),
         duration_min: durationMin,
+        capacity,
         description: description.trim(),
         active,
       };
@@ -167,6 +169,17 @@ export function AdminClassForm({ initial }: AdminClassFormProps) {
           max={180}
           value={durationMin}
           onChange={(e) => setDurationMin(Number(e.target.value))}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="capacity">Capacity</label>
+        <input
+          id="capacity"
+          type="number"
+          min={1}
+          max={400}
+          value={capacity}
+          onChange={(e) => setCapacity(Number(e.target.value))}
         />
       </div>
       <div className="field">

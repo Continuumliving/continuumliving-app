@@ -38,6 +38,7 @@ export interface ClassRow {
   duration_min: number;
   description: string;
   active: boolean;
+  capacity: number;
 }
 
 export interface BookingRow {
