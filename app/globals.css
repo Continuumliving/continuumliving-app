@@ -858,28 +858,54 @@ label {
 }
 
 .account-hero {
-  background: var(--ink);
-  color: var(--bone);
-  padding: 32px 24px;
+  position: relative;
+  isolation: isolate;
+  padding: 36px 24px 30px;
   margin: 16px 0 28px;
+  color: #ffffff;
+  /* Warm fallback while the image loads / if it 404s. */
+  background-color: #2a2622;
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(26, 24, 23, 0.18) 0%,
+      rgba(26, 24, 23, 0.42) 55%,
+      rgba(26, 24, 23, 0.86) 100%
+    ),
+    url("/images/almina-hero.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 .account-hero .h1,
 .account-hero h1 {
-  color: var(--bone);
+  color: #ffffff;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.18);
 }
 .account-hero .h1 em,
 .account-hero h1 em {
-  color: var(--terracotta);
+  color: var(--terracotta-soft);
 }
 .account-hero .meta {
-  color: var(--terracotta-soft);
+  color: rgba(255, 255, 255, 0.82);
   margin-top: 18px;
   margin-bottom: 4px;
 }
 .account-hero .email {
   font-size: 12px;
-  color: var(--stone);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 300;
+}
+.account-hero .dev-chip {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.account-hero .dev-chip.olive {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
 .activity-row {
