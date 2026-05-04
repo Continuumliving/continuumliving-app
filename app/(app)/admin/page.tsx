@@ -3,7 +3,6 @@ import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 import { HeroNameCard } from "@/components/HeroNameCard";
 import { Row } from "@/components/Row";
-import { SpecRow } from "@/components/SpecRow";
 import { getCurrentProfile, getRequestClient } from "@/lib/auth-cache";
 import { isAdmin } from "@/lib/profile";
 import { DAY_SHORT, MONTH_SHORT } from "@/lib/format";
@@ -298,19 +297,18 @@ export default async function AdminIndex() {
         )}
       </div>
 
-      {/* ── Audit ── */}
+      {/* ── Audit · class bookings ── */}
       <div style={{ marginTop: 36 }}>
         <div className="eyebrow" style={{ marginBottom: 14 }}>
-          — Audit · recent class bookings
+          — All class bookings · {bookings.length}
         </div>
         {bookings.length === 0 ? (
           <div className="empty-state">
             <p>No bookings yet.</p>
           </div>
         ) : (
-          bookings
-            .slice(-10)
-            .reverse()
+          [...bookings]
+            .sort((a, b) => b.created_at.localeCompare(a.created_at))
             .map((b) => {
               const p = profileById.get(b.profile_id);
               const cls = classes.find((c) => c.id === b.class_id);
@@ -318,29 +316,41 @@ export default async function AdminIndex() {
                 `${p?.first_name ?? ""} ${p?.last_name ?? ""}`.trim() ||
                 p?.email ||
                 "Resident";
+              const d = new Date(`${b.session_date}T12:00:00Z`);
+              const dateLabel = `${DAY_SHORT[d.getUTCDay()]} ${d.getUTCDate()} ${MONTH_SHORT[d.getUTCMonth()]}`;
               return (
-                <SpecRow
+                <Row
                   key={b.id}
-                  label={fullName}
-                  value={`${cls?.title ?? "—"} · ${b.session_date}`}
+                  staticRow
+                  accent={cls?.intensity === "high" ? "terracotta" : "olive"}
+                  title={`${cls?.title ?? "—"} · ${cls?.time ?? ""}`}
+                  subtitle={
+                    <>
+                      {fullName}
+                      {p?.email ? ` · ${p.email}` : ""}
+                      {p?.unit_number ? ` · ${p.unit_number}` : ""}
+                    </>
+                  }
+                  aside={dateLabel}
+                  asideTone={cls?.intensity === "high" ? "terracotta" : "olive"}
                 />
               );
             })
         )}
       </div>
 
+      {/* ── Audit · event reservations ── */}
       <div style={{ marginTop: 36, marginBottom: 8 }}>
         <div className="eyebrow" style={{ marginBottom: 14 }}>
-          — Audit · recent event reservations
+          — All event reservations · {rsvps.length}
         </div>
         {rsvps.length === 0 ? (
           <div className="empty-state">
             <p>No reservations yet.</p>
           </div>
         ) : (
-          rsvps
-            .slice(-10)
-            .reverse()
+          [...rsvps]
+            .sort((a, b) => b.created_at.localeCompare(a.created_at))
             .map((r) => {
               const p = profileById.get(r.profile_id);
               const ev = events.find((e) => e.id === r.event_id);
@@ -348,11 +358,27 @@ export default async function AdminIndex() {
                 `${p?.first_name ?? ""} ${p?.last_name ?? ""}`.trim() ||
                 p?.email ||
                 "Resident";
+              const dateLabel = ev
+                ? (() => {
+                    const d = new Date(`${ev.date}T12:00:00Z`);
+                    return `${DAY_SHORT[d.getUTCDay()]} ${d.getUTCDate()} ${MONTH_SHORT[d.getUTCMonth()]} · ${ev.time}`;
+                  })()
+                : "—";
               return (
-                <SpecRow
+                <Row
                   key={r.id}
-                  label={fullName}
-                  value={ev?.title ?? "—"}
+                  staticRow
+                  accent="olive"
+                  title={ev?.title ?? "—"}
+                  subtitle={
+                    <>
+                      {fullName}
+                      {p?.email ? ` · ${p.email}` : ""}
+                      {p?.unit_number ? ` · ${p.unit_number}` : ""}
+                    </>
+                  }
+                  aside={dateLabel}
+                  asideTone="olive"
                 />
               );
             })
