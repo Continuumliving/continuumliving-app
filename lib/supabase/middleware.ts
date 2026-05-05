@@ -30,9 +30,17 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Never let an auth/network blip take the whole site down. If
+  // we can't reach Supabase right now, treat the visitor as anon
+  // and let the page-level guards handle the redirect.
+  let user: { id: string } | null = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user ?? null;
+  } catch (err) {
+    console.error("[middleware] auth.getUser failed:", err);
+    return response;
+  }
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname === "/signin" || pathname === "/signup";
