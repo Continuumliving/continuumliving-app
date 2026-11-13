@@ -39,6 +39,8 @@ export interface ClassRow {
   description: string;
   active: boolean;
   capacity: number;
+  image?: string | null;
+  category?: string | null;
 }
 
 export interface BookingRow {
@@ -59,6 +61,7 @@ export interface EventRow {
   capacity: number;
   kind: EventKind;
   description: string;
+  image?: string | null;
 }
 
 export interface EventRsvpRow {
@@ -82,15 +85,15 @@ export interface SessionHistoryRow {
 export const DEVELOPMENTS: Record<Development, DevelopmentRow> = {
   almina: {
     id: "almina",
-    name: "Almina Residence",
-    location: "Estepona",
+    name: "Private Residences",
+    location: "",
     series: "Series One",
     accent: "terracotta",
   },
   alcantara: {
     id: "alcantara",
-    name: "Almina Residence",
-    location: "Estepona",
+    name: "Private Residences",
+    location: "",
     series: "Series One",
     accent: "olive",
   },

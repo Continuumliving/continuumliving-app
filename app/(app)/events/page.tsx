@@ -1,43 +1,57 @@
 "use client";
 
-import { HeroNameCard } from "@/components/HeroNameCard";
-import { EventCard } from "@/components/EventCard";
-import { useEvents, useRsvps } from "@/lib/data-context";
+import { useActions } from "@/components/oa/useActions";
+import { useEventCounts, useEvents, useRsvps } from "@/lib/data-context";
+import { todayMadridISO } from "@/lib/dates";
+import { eventImage, eventWhen } from "@/lib/owners";
 
 export default function EventsPage() {
   const events = useEvents();
   const rsvps = useRsvps();
-  const rsvpSet = new Set(rsvps.map((r) => r.event_id));
+  const counts = useEventCounts();
+  const { reserve, unreserve, busy } = useActions();
+  const today = todayMadridISO();
+  const list = events.filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date));
 
   return (
-    <div className="screen">
-      <HeroNameCard
-        tone="olive"
-        eyebrow="— The calendar"
-        title={
-          <>
-            Twelve gatherings,
-            <br />
-            <em style={{ color: "var(--olive)" }}>each year.</em>
-          </>
-        }
-        intro="Curated evenings and excursions for Almina Residence. Small numbers, careful details."
-      />
-
-      <div style={{ marginTop: 20 }}>
-        {events.map((e) => (
-          <EventCard
-            key={e.id}
-            id={e.id}
-            isoDate={e.date}
-            time={e.time}
-            title={e.title}
-            venue={e.venue}
-            kind={e.kind}
-            rsvped={rsvpSet.has(e.id)}
-          />
-        ))}
+    <main className="oa">
+      <div>
+        <div className="oa-eyebrow">Residents only</div>
+        <h1 className="oa-h1">Events</h1>
       </div>
-    </div>
+      {list.length === 0 && (
+        <div className="oa-card oa-empty">
+          <div className="oa-eyebrow">Coming soon</div>
+          <p>The next season of resident events is being planned. You will find them here first.</p>
+        </div>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {list.map((e) => {
+          const mine = rsvps.find((r) => r.event_id === e.id);
+          const left = Math.max(e.capacity - (counts[e.id] ?? (mine ? 1 : 0)), 0);
+          return (
+            <article key={e.id} className="oa-card oa-ev">
+              <div className="oa-ph">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={eventImage(e)} alt="" />
+              </div>
+              <div className="oa-body">
+                <div className="oa-eyebrow">{eventWhen(e)}</div>
+                <h2 className="oa-h2">{e.title}</h2>
+                <div className="oa-desc">{e.description}</div>
+                <div className="oa-row">
+                  <span className="oa-meta">{e.venue} · {left} seats left</span>
+                  {mine ? (
+                    <button className="oa-pill solid" onClick={() => unreserve(mine.id)} disabled={busy === mine.id}>Reserved ✓</button>
+                  ) : (
+                    <button className="oa-pill gold" onClick={() => reserve(e.id)} disabled={left === 0 || busy === e.id}>{left === 0 ? "Full" : "Reserve my seat"}</button>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </main>
   );
 }

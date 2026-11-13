@@ -9,6 +9,7 @@ import {
   fetchMySessionHistory,
 } from "@/lib/bookings";
 import { DataProvider, type InitialData } from "@/lib/data-context";
+import { fetchClassCounts, fetchEventCounts } from "@/lib/owners";
 
 /**
  * Wrap a single Supabase fetch so one broken table or missing
@@ -43,12 +44,14 @@ export default async function AppGroupLayout({
   // failure: a missing table or RLS hiccup degrades to an empty
   // list instead of taking the whole layout down with it.
   const supabase = getRequestClient();
-  const [classes, events, bookings, rsvps, history] = await Promise.all([
+  const [classes, events, bookings, rsvps, history, classCounts, eventCounts] = await Promise.all([
     safe("fetchAllClasses", () => fetchAllClasses(supabase), []),
     safe("fetchAllEvents", () => fetchAllEvents(supabase), []),
     safe("fetchMyBookings", () => fetchMyBookings(supabase), []),
     safe("fetchMyRsvps", () => fetchMyRsvps(supabase), []),
     safe("fetchMySessionHistory", () => fetchMySessionHistory(supabase), []),
+    safe("fetchClassCounts", () => fetchClassCounts(supabase), {}),
+    safe("fetchEventCounts", () => fetchEventCounts(supabase), {}),
   ]);
 
   const initial: InitialData = {
@@ -58,6 +61,8 @@ export default async function AppGroupLayout({
     bookings,
     rsvps,
     history,
+    classCounts,
+    eventCounts,
   };
 
   return (

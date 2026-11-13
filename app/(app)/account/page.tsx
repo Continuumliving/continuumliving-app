@@ -1,186 +1,117 @@
 "use client";
 
 import Link from "next/link";
-import { AccountHero } from "@/components/AccountHero";
-import { Row } from "@/components/Row";
+import { useState } from "react";
+import { LogoMark } from "@/components/oa/Icons";
 import { SignOutButton } from "@/components/SignOutButton";
-import { StatGrid, StatRow } from "@/components/StatGrid";
-import {
-  useBookings,
-  useClasses,
-  useHistory,
-  useProfile,
-  useRsvps,
-} from "@/lib/data-context";
-import { countSessions } from "@/lib/bookings";
-import { DAY_SHORT, MONTH_SHORT } from "@/lib/format";
+import { useActions } from "@/components/oa/useActions";
+import { useBookings, useClasses, useProfile, useRsvps, useEvents } from "@/lib/data-context";
+import { formatShortDate, todayMadridISO } from "@/lib/dates";
+import { MONTH_SHORT } from "@/lib/format";
+import { eventWhen, initials } from "@/lib/owners";
 import { DEVELOPMENTS } from "@/lib/types";
 
 export default function AccountPage() {
   const profile = useProfile();
   const bookings = useBookings();
-  const history = useHistory();
-  const rsvps = useRsvps();
   const classes = useClasses();
-
+  const rsvps = useRsvps();
+  const events = useEvents();
+  const { unbook, unreserve, busy } = useActions();
+  const [all, setAll] = useState(false);
   if (!profile) return null;
 
-  const counts = countSessions(history);
-  const dev = DEVELOPMENTS[profile.development];
-  const joined = new Date(profile.joined_at);
-  const memberSince = `${MONTH_SHORT[joined.getUTCMonth()]} ${joined.getUTCFullYear()}`;
+  const today = todayMadridISO();
+  const byId = new Map(classes.map((c) => [c.id, c]));
+  const withClass = bookings.filter((b) => byId.has(b.class_id)).map((b) => ({ b, c: byId.get(b.class_id)! }));
+  const upcoming = withClass.filter((x) => x.b.session_date >= today).sort((x, y) => (x.b.session_date + x.c.time).localeCompare(y.b.session_date + y.c.time));
+  const past = withClass.filter((x) => x.b.session_date < today).sort((x, y) => y.b.session_date.localeCompare(x.b.session_date));
+  const month = today.slice(0, 7);
+  const thisMonth = past.filter((x) => x.b.session_date.startsWith(month));
+  const hiMonth = thisMonth.filter((x) => x.c.intensity === "high").length;
+  const myEvents = events.filter((e) => e.date >= today && rsvps.some((r) => r.event_id === e.id));
 
-  const today = new Date().toISOString().slice(0, 10);
-  const classById = new Map(classes.map((c) => [c.id, c]));
-  const upcomingBookings = bookings
-    .filter((b) => b.session_date >= today)
-    .sort((a, b) => a.session_date.localeCompare(b.session_date))
-    .map((b) => ({ booking: b, cls: classById.get(b.class_id) }));
+  const joined = new Date(profile.joined_at);
+  const since = `${MONTH_SHORT[joined.getUTCMonth()]} ${joined.getUTCFullYear()}`;
+  const until = `${MONTH_SHORT[joined.getUTCMonth()]} ${joined.getUTCFullYear() + 1}`;
+  const dev = DEVELOPMENTS[profile.development];
+  const shown = all ? past : past.slice(0, 6);
 
   return (
-    <div className="screen">
-      <AccountHero
-        firstName={profile.first_name}
-        lastName={profile.last_name}
-        unit={profile.unit_number}
-        email={profile.email}
-        development={{
-          id: profile.development,
-          name: dev.name,
-          location: dev.location,
-        }}
-      />
-
-      <div className="section-lead">
-        <div className="eyebrow">— Your activity</div>
-      </div>
-
-      <StatGrid high={counts.high} low={counts.low} />
-      <StatRow
-        value={upcomingBookings.length}
-        label="Upcoming bookings"
-        since="This week"
-      />
-
-      <div style={{ marginTop: 32 }}>
-        <div className="eyebrow" style={{ marginBottom: 10 }}>
-          — Session breakdown
-        </div>
-        <div className="activity-row">
-          <span className="activity-label">High intensity completed</span>
-          <span className="activity-value">{counts.high}</span>
-        </div>
-        <div className="activity-row">
-          <span className="activity-label olive">Low intensity completed</span>
-          <span className="activity-value">{counts.low}</span>
-        </div>
-        <div className="activity-row">
-          <span className="activity-label stone">Events attended</span>
-          <span className="activity-value">{rsvps.length}</span>
-        </div>
-        <div className="activity-row">
-          <span className="activity-label ink">Total sessions</span>
-          <span className="activity-value">{counts.total}</span>
+    <main className="oa">
+      <Link href="/today" className="oa-back">‹ Home</Link>
+      <div className="oa-prof">
+        <div className="oa-me" aria-hidden="true">{initials(profile.first_name, profile.last_name)}</div>
+        <div style={{ minWidth: 0 }}>
+          <h1 className="oa-h1" style={{ fontSize: 30 }}>{profile.first_name} {profile.last_name ? `${profile.last_name.charAt(0)}.` : ""}</h1>
+          <div className="oa-sub" style={{ marginTop: 4 }}>{profile.unit_number && profile.unit_number !== "—" ? `Residence ${profile.unit_number} · ` : ""}{dev?.name ?? "Private Residences"}</div>
         </div>
       </div>
 
-      {upcomingBookings.length > 0 ? (
-        <div style={{ marginTop: 36 }}>
-          <div className="eyebrow" style={{ marginBottom: 14 }}>
-            — Upcoming bookings
+      <div className="oa-dark oa-member">
+        <LogoMark className="oa-wm" />
+        <div className="oa-eyebrow g" style={{ position: "relative" }}>Membership</div>
+        <div style={{ fontFamily: "var(--serif)", fontSize: 25, marginTop: 8, position: "relative" }}>Continuum Longevity Programme</div>
+        <div style={{ fontSize: 14, color: "#cfcac0", marginTop: 6, position: "relative" }}>Included with your residence</div>
+        <div className="oa-row" style={{ marginTop: 16, position: "relative", fontSize: 13, color: "#cfcac0" }}>
+          <span>Member since {since}</span><span style={{ color: "var(--gold)" }}>Valid until {until}</span>
+        </div>
+      </div>
+
+      <div className="oa-grid4">
+        <div className="oa-card oa-stat"><div className="k">Sessions</div><div className="oa-big" style={{ marginTop: 6 }}>{past.length}</div><div className="oa-sub" style={{ fontSize: 12 }}>since you joined</div></div>
+        <div className="oa-card oa-stat"><div className="k">This month</div><div className="oa-big" style={{ marginTop: 6 }}>{thisMonth.length}</div><div className="oa-sub" style={{ fontSize: 12 }}>{hiMonth} high · {thisMonth.length - hiMonth} low</div></div>
+        <div className="oa-card oa-stat"><div className="k">Upcoming</div><div className="oa-big" style={{ marginTop: 6 }}>{upcoming.length}</div><div className="oa-sub" style={{ fontSize: 12 }}>classes booked</div></div>
+        <div className="oa-card oa-stat"><div className="k">Events</div><div className="oa-big" style={{ marginTop: 6 }}>{myEvents.length}</div><div className="oa-sub" style={{ fontSize: 12 }}>seats reserved</div></div>
+      </div>
+
+      <div className="oa-sec"><h2 className="oa-h2">Upcoming</h2><Link href="/classes" className="oa-sub">Book more ›</Link></div>
+      <div className="oa-card oa-list">
+        {upcoming.length === 0 && myEvents.length === 0 && <div className="oa-li"><span className="oa-sub">Nothing booked yet.</span></div>}
+        {upcoming.map(({ b, c }) => (
+          <div className="oa-li" key={b.id}>
+            <span className="oa-ib" style={{ background: c.intensity === "high" ? "var(--gold)" : "var(--lo)" }} />
+            <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 500 }}>{c.title}</div><div className="oa-meta">{formatShortDate(b.session_date)} · {c.time} · {c.venue}</div></div>
+            <button className="oa-pill line" onClick={() => unbook(b.id)} disabled={busy === b.id}>Cancel</button>
           </div>
-          {upcomingBookings.map(({ booking, cls }) => {
-            if (!cls) return null;
-            const dayName = DAY_SHORT[cls.day];
-            return (
-              <Row
-                key={booking.id}
-                accent="terracotta"
-                title={cls.title}
-                subtitle={cls.venue}
-                aside={
-                  <>
-                    {dayName}
-                    <br />
-                    <span className="row-time">{cls.time}</span>
-                  </>
-                }
-              />
-            );
-          })}
-        </div>
-      ) : null}
+        ))}
+        {myEvents.map((e) => {
+          const r = rsvps.find((x) => x.event_id === e.id)!;
+          return (
+            <div className="oa-li" key={e.id}>
+              <span className="oa-ib" style={{ background: "var(--navy)" }} />
+              <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 500 }}>{e.title}</div><div className="oa-meta">{eventWhen(e)}</div></div>
+              <button className="oa-pill line" onClick={() => unreserve(r.id)} disabled={busy === r.id}>Cancel</button>
+            </div>
+          );
+        })}
+      </div>
 
-      {history.length > 0 ? (
-        <div style={{ marginTop: 32 }}>
-          <div className="eyebrow stone" style={{ marginBottom: 14 }}>
-            — Recent sessions
+      {past.length > 0 && (
+        <>
+          <div className="oa-sec"><h2 className="oa-h2">Class history</h2><span className="oa-sub">{past.length} sessions</span></div>
+          <div className="oa-card oa-list">
+            {shown.map(({ b, c }) => (
+              <div className="oa-li" key={b.id}>
+                <span className="oa-ib" style={{ background: c.intensity === "high" ? "var(--gold)" : "var(--lo)" }} />
+                <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 500 }}>{c.title}</div><div className="oa-meta">{formatShortDate(b.session_date)} · {c.venue}</div></div>
+                <div className="oa-meta">{c.duration_min} min</div>
+              </div>
+            ))}
           </div>
-          {history.slice(0, 5).map((s) => {
-            const d = new Date(`${s.session_date}T12:00:00Z`);
-            const dateLabel = `${DAY_SHORT[d.getUTCDay()]} ${d.getUTCDate()} ${MONTH_SHORT[d.getUTCMonth()]}`;
-            return (
-              <Row
-                key={s.id}
-                accent={s.intensity === "high" ? "terracotta" : "olive"}
-                staticRow
-                title={s.title}
-                subtitle={s.venue}
-                aside={dateLabel}
-                asideTone={s.intensity === "high" ? "terracotta" : "olive"}
-              />
-            );
-          })}
-        </div>
-      ) : null}
+          {past.length > 6 && <button className="oa-pill line" style={{ alignSelf: "center" }} onClick={() => setAll(!all)}>{all ? "Show fewer" : "Show all sessions"}</button>}
+        </>
+      )}
 
-      <div style={{ marginTop: 36 }}>
-        <div className="eyebrow" style={{ marginBottom: 10 }}>
-          — Preferences
-        </div>
-        <a
-          href="https://wa.me/+34609019874"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="row accent"
-        >
-          <div className="row-main">
-            <span className="body-sm">Concierge, direct</span>
-          </div>
-          <div className="row-aside">WhatsApp</div>
-        </a>
-        <Row
-          staticRow
-          title={<span className="body-sm">Dietary & health notes</span>}
-          aside="Edit"
-        />
-        <Row
-          staticRow
-          title={<span className="body-sm">Privacy preferences</span>}
-          aside="Edit"
-        />
+      <div className="oa-sec"><h2 className="oa-h2">Settings</h2></div>
+      <div className="oa-card oa-list">
+        <div className="oa-kv"><span>Email</span><span>{profile.email}</span></div>
+        <a className="oa-kv" href="https://wa.me/34609019874" target="_blank" rel="noopener noreferrer"><span>Concierge</span><span>WhatsApp ›</span></a>
+        <div className="oa-kv"><span>Language</span><span>English</span></div>
+        {profile.role === "admin" && <Link className="oa-kv" href="/admin"><span>Coach & admin</span><span style={{ color: "var(--gold-d)" }}>Open admin panel ›</span></Link>}
       </div>
-
-      {profile.role === "admin" ? (
-        <div style={{ marginTop: 28 }}>
-          <Link
-            href="/admin"
-            prefetch
-            className="btn btn-ghost"
-            style={{ display: "block" }}
-          >
-            Admin
-          </Link>
-        </div>
-      ) : null}
-
-      <div style={{ marginTop: 36 }}>
-        <SignOutButton />
-      </div>
-
-      <div className="member-since">
-        <span>Member since {memberSince}</span>
-      </div>
-    </div>
+      <div style={{ alignSelf: "center", minWidth: 200 }}><SignOutButton /></div>
+      <div className="oa-footnote">Continuum Living</div>
+    </main>
   );
 }

@@ -20,7 +20,7 @@ export default function SignUpPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [development, setDevelopment] = useState<Development | "">("");
+  const [development, setDevelopment] = useState<Development | "">("almina");
   const [unit, setUnit] = useState("");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -204,9 +204,9 @@ export default function SignUpPage() {
             onChange={(e) => setDevelopment(e.target.value as Development | "")}
           >
             <option value="">Select your development</option>
-            {Object.values(DEVELOPMENTS).map((d) => (
+            {Object.values(DEVELOPMENTS).filter((d) => d.id === "almina").map((d) => (
               <option key={d.id} value={d.id}>
-                {d.name} · {d.location}
+                {d.location ? `${d.name} · ${d.location}` : d.name}
               </option>
             ))}
           </select>

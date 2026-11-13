@@ -5,13 +5,13 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Continuum Living · The Residency",
     short_name: "Continuum",
     description:
-      "A quietly held standard. Classes, events, and membership for residents of Almina Residence, Estepona.",
+      "Classes, events, your coach and your personal health brief, for residents of Continuum Living residences.",
     display: "standalone",
     orientation: "portrait",
     start_url: "/today",
     scope: "/",
-    background_color: "#F7F2EA",
-    theme_color: "#F7F2EA",
+    background_color: "#f6f2ea",
+    theme_color: "#f6f2ea",
     icons: [
       { src: "/icon", sizes: "any", type: "image/svg+xml" },
       { src: "/apple-icon", sizes: "180x180", type: "image/png" },

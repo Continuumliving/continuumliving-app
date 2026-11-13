@@ -15,6 +15,12 @@ import {
   fetchMyRsvps,
 } from "@/lib/events";
 import { fetchMyProfile } from "@/lib/profile";
+import {
+  fetchClassCounts,
+  fetchEventCounts,
+  type ClassCounts,
+  type EventCounts,
+} from "@/lib/owners";
 import type {
   BookingRow,
   ClassRow,
@@ -31,6 +37,8 @@ export const KEY = {
   bookings: "continuum:bookings",
   rsvps: "continuum:rsvps",
   history: "continuum:history",
+  classCounts: "continuum:classCounts",
+  eventCounts: "continuum:eventCounts",
 } as const;
 
 export interface InitialData {
@@ -40,6 +48,8 @@ export interface InitialData {
   bookings: BookingRow[];
   rsvps: EventRsvpRow[];
   history: SessionHistoryRow[];
+  classCounts: ClassCounts;
+  eventCounts: EventCounts;
 }
 
 const fetchers: Record<string, () => Promise<unknown>> = {
@@ -49,6 +59,8 @@ const fetchers: Record<string, () => Promise<unknown>> = {
   [KEY.bookings]: async () => fetchMyBookings(getBrowserClient()),
   [KEY.rsvps]: async () => fetchMyRsvps(getBrowserClient()),
   [KEY.history]: async () => fetchMySessionHistory(getBrowserClient()),
+  [KEY.classCounts]: async () => fetchClassCounts(getBrowserClient()).catch(() => ({})),
+  [KEY.eventCounts]: async () => fetchEventCounts(getBrowserClient()).catch(() => ({})),
 };
 
 const swrConfig: SWRConfiguration = {
@@ -84,6 +96,8 @@ export function DataProvider({
           [KEY.bookings]: initial.bookings,
           [KEY.rsvps]: initial.rsvps,
           [KEY.history]: initial.history,
+          [KEY.classCounts]: initial.classCounts,
+          [KEY.eventCounts]: initial.eventCounts,
         },
       }}
     >
@@ -122,6 +136,16 @@ export function useHistory(): SessionHistoryRow[] {
   return data ?? [];
 }
 
+export function useClassCounts(): ClassCounts {
+  const { data } = useSWR<ClassCounts>(KEY.classCounts);
+  return data ?? {};
+}
+
+export function useEventCounts(): EventCounts {
+  const { data } = useSWR<EventCounts>(KEY.eventCounts);
+  return data ?? {};
+}
+
 /**
  * Returns a typed object with helpers that update the SWR cache
  * after mutations, optimistically where possible. Pages call
@@ -140,6 +164,7 @@ export function useDataMutations() {
       // session_history is appended by a DB trigger — the safest path
       // is to revalidate just that key, which is a single SELECT.
       mutate(KEY.history);
+      mutate(KEY.classCounts);
     },
     removeBooking(id: string) {
       mutate(
@@ -149,6 +174,7 @@ export function useDataMutations() {
         { revalidate: false },
       );
       mutate(KEY.history);
+      mutate(KEY.classCounts);
     },
     addRsvp(row: EventRsvpRow) {
       mutate(
@@ -156,6 +182,7 @@ export function useDataMutations() {
         (current: EventRsvpRow[] | undefined) => [...(current ?? []), row],
         { revalidate: false },
       );
+      mutate(KEY.eventCounts);
     },
     removeRsvp(id: string) {
       mutate(
@@ -164,6 +191,7 @@ export function useDataMutations() {
           (current ?? []).filter((r) => r.id !== id),
         { revalidate: false },
       );
+      mutate(KEY.eventCounts);
     },
     /** Force-refresh a specific cache key from the server. */
     revalidate(
