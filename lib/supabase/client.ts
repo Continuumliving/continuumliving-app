@@ -43,15 +43,6 @@ export function getBrowserClient() {
     );
   }
 
-  // Basic shape check for the anon JWT — prevents confusion with the
-  // service_role key (also a JWT, same shape) but at least flags a
-  // non-JWT string that might have been pasted by mistake.
-  if (!/^ey[\w-]+\.[\w-]+\.[\w-]+$/.test(anonKey!) && !/^sb_publishable_/.test(anonKey!)) {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY does not look like a JWT. Copy the anon public key from Supabase → Project Settings → API.",
-    );
-  }
-
   client = createBrowserClient(url!, anonKey!);
   return client;
 }
