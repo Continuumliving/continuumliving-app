@@ -1,5 +1,6 @@
 "use client";
 
+import { supabaseAnonKey, supabaseUrl } from "./env";
 import { createBrowserClient } from "@supabase/ssr";
 
 let client: ReturnType<typeof createBrowserClient> | null = null;
@@ -16,8 +17,8 @@ export function getBrowserClient() {
   // NOTE: NEXT_PUBLIC_* variables are inlined at BUILD time by Next.js.
   // If this error fires in production, the build ran without the env
   // variables set — redeploy the Vercel project AFTER adding them.
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = supabaseUrl();
+  const anonKey = supabaseAnonKey();
 
   const missing: string[] = [];
   if (!url) missing.push("NEXT_PUBLIC_SUPABASE_URL");
@@ -45,7 +46,7 @@ export function getBrowserClient() {
   // Basic shape check for the anon JWT — prevents confusion with the
   // service_role key (also a JWT, same shape) but at least flags a
   // non-JWT string that might have been pasted by mistake.
-  if (!/^ey[\w-]+\.[\w-]+\.[\w-]+$/.test(anonKey!)) {
+  if (!/^ey[\w-]+\.[\w-]+\.[\w-]+$/.test(anonKey!) && !/^sb_publishable_/.test(anonKey!)) {
     throw new Error(
       "NEXT_PUBLIC_SUPABASE_ANON_KEY does not look like a JWT. Copy the anon public key from Supabase → Project Settings → API.",
     );
