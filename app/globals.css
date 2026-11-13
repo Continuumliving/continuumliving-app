@@ -1153,3 +1153,20 @@ body { background: var(--paper); }
 .oa a.oa-dark, .oa button.oa-dark, .oa .oa-dark { color: #f3eee4; }
 .oa a.oa-hero { color: #f6f2ea; }
 .oa .oa-day { padding: 10px 0; }
+
+/* ---------- auth (Owners App) ---------- */
+.auth-screen { background: var(--paper); box-shadow: none; padding: calc(48px + env(safe-area-inset-top, 0px)) 24px 40px; max-width: 480px; }
+.auth-brand { display: flex; flex-direction: column; align-items: center; gap: 14px; font-family: var(--sans); font-size: 11px; letter-spacing: .32em; color: var(--ink); margin-bottom: 48px; }
+.auth-brand em { color: var(--gold); font-style: normal; }
+.auth-logo { width: 64px; height: 64px; border-radius: 50%; background: var(--navy); color: var(--gold); display: grid; place-items: center; box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--gold); }
+.auth-logo svg { width: 38px; height: 38px; }
+.auth-screen h1, .auth-screen .h1 { font-family: var(--serif); font-weight: 500; font-size: 44px; line-height: 1.02; }
+.auth-screen .h1 em, .auth-screen h1 em { color: var(--gold-d); font-style: italic; }
+.auth-screen .intro { color: var(--soft); font-size: 15px; line-height: 1.6; }
+.auth-form { background: var(--card); border-radius: 22px; padding: 22px 20px 20px; box-shadow: 0 10px 26px -18px rgba(21,24,31,.45); flex: none; }
+.auth-screen .field label { font-size: 11px; letter-spacing: .18em; color: var(--mute); }
+.auth-screen .field input, .auth-screen .field select { border: 1px solid var(--line) !important; background: var(--paper) !important; border-radius: 14px !important; padding: 13px 14px !important; font-size: 16px !important; margin-top: 8px; width: 100%; color: var(--ink); }
+.auth-screen .field input:focus, .auth-screen .field select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.auth-screen .field { margin-bottom: 16px; }
+.auth-screen .btn, .auth-screen .btn-terracotta { background: var(--navy) !important; color: #f6f2ea !important; border-radius: 999px; font-size: 12px; letter-spacing: .22em; padding: 16px; margin-top: 6px; }
+.auth-footer a, .auth-footer button { color: var(--gold-d) !important; }
