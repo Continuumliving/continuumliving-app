@@ -1194,3 +1194,22 @@ body { background: var(--paper); }
 .oa .oa-switch i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
 .oa .oa-switch.on { background: var(--gold); }
 .oa .oa-switch.on i { transform: translateX(20px); }
+
+/* ---------- install prompt ---------- */
+.oa-install { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+.oa-install-scrim { position: absolute; inset: 0; background: rgba(14,18,26,.45); animation: oaFade .3s ease; }
+.oa-install-card { position: relative; width: 100%; max-width: 480px; background: var(--paper); border-radius: 28px 28px 0 0; padding: 30px 24px calc(24px + env(safe-area-inset-bottom, 0px)); animation: oaUp .35s cubic-bezier(.2,.8,.2,1); }
+.oa-install-logo { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 18px; background: var(--navy); color: var(--gold); display: grid; place-items: center; }
+.oa-install-logo svg { width: 40px; height: 40px; }
+.oa-install-steps { list-style: none; margin: 22px 0 0; padding: 0; background: var(--card); border-radius: 20px; }
+.oa-install-steps li { display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--ink); }
+.oa-install-steps li:last-child { border-bottom: 0; }
+.oa-install-steps li > span:nth-child(2) { flex: 1; }
+.oa-install-steps .n { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: var(--gold); font-size: 13px; display: grid; place-items: center; flex: none; }
+.oa-install-steps svg { color: #2f6fe4; flex: none; }
+.oa-install-mini { width: 26px; height: 26px; border-radius: 7px; background: var(--navy); color: var(--gold); display: grid; place-items: center; flex: none; }
+.oa-install-mini svg { width: 18px; height: 18px; color: var(--gold); }
+.oa-install-later { display: block; margin: 16px auto 0; background: none; border: 0; font: inherit; font-size: 14px; color: var(--mute); letter-spacing: .06em; padding: 8px 16px; cursor: pointer; }
+@keyframes oaUp { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes oaFade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .oa-install-card, .oa-install-scrim { animation: none; } }
