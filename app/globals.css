@@ -1213,3 +1213,8 @@ body { background: var(--paper); }
 @keyframes oaUp { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes oaFade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .oa-install-card, .oa-install-scrim { animation: none; } }
+.oa-install-key { font-size: 15px; letter-spacing: 1px; color: #2f6fe4; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #eef3fd; flex: none; }
+.oa-install-arrow { display: flex; justify-content: center; color: var(--gold-d); margin-top: 6px; animation: oaBob 1.4s ease-in-out infinite; }
+.oa-install-arrow.right { justify-content: flex-end; padding-right: 18px; }
+@keyframes oaBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .oa-install-arrow { animation: none; } }
