@@ -18,7 +18,10 @@ export default async function AdminThread({ params }: { params: { id: string } }
 
   return (
     <main className="oa oa-chat">
-      <Link href="/admin/messages" className="oa-back">‹ Inbox</Link>
+      <div className="oa-row">
+        <Link href="/admin/messages" className="oa-back">‹ Inbox</Link>
+        <Link href={`/admin/briefs/${params.id}`} className="oa-pill line">Health brief</Link>
+      </div>
       <div className="oa-card oa-coachcard">
         <div className="oa-me" style={{ width: 52, height: 52 }}>{(name.charAt(0) || "R").toUpperCase()}</div>
         <div>

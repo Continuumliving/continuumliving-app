@@ -120,6 +120,9 @@ export default async function AdminIndex() {
       <Link href="/admin/messages" className="btn" style={{ margin: "8px 0 18px" }}>
         Coach inbox · messages from residents
       </Link>
+      <Link href="/admin/briefs" className="btn" style={{ margin: "0 0 18px", background: "var(--gold)", color: "var(--navy)" }}>
+        Health briefs · write this week
+      </Link>
 
       {/* ── Topline ── */}
       <div className="section-lead">

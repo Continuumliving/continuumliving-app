@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   const priv = process.env.VAPID_PRIVATE_KEY;
   if (!priv) return NextResponse.json({ sent: 0, reason: "push not configured" });
 
-  let body: { residentId?: string; preview?: string };
+  let body: { residentId?: string; preview?: string; kind?: string };
   try {
     body = await req.json();
   } catch {
@@ -36,12 +36,18 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ sent: 0, reason: "lookup failed" });
 
   const fromCoach = sender?.role === "admin" && me.id !== residentId;
-  const payload = JSON.stringify({
-    title: fromCoach ? "Your coach replied" : `New message from ${sender?.first_name || "a resident"}`,
-    body: (body.preview || "").toString().slice(0, 140),
-    url: fromCoach ? "/coach" : `/admin/messages/${residentId}`,
-    tag: `thread-${residentId}`,
-  });
+  const isBrief = body.kind === "brief";
+  if (isBrief && !fromCoach) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  const payload = JSON.stringify(
+    isBrief
+      ? { title: "Your weekly brief is ready", body: "Your coach has written up your week.", url: "/brief", tag: `brief-${residentId}` }
+      : {
+          title: fromCoach ? "Your coach replied" : `New message from ${sender?.first_name || "a resident"}`,
+          body: (body.preview || "").toString().slice(0, 140),
+          url: fromCoach ? "/coach" : `/admin/messages/${residentId}`,
+          tag: `thread-${residentId}`,
+        },
+  );
 
   webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:tomash@continuumliving.eu", PUBLIC, priv);
 

@@ -1218,3 +1218,31 @@ body { background: var(--paper); }
 .oa-install-arrow.right { justify-content: flex-end; padding-right: 18px; }
 @keyframes oaBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
 @media (prefers-reduced-motion: reduce) { .oa-install-arrow { animation: none; } }
+
+/* ---------- brief ---------- */
+.oa-k { font-size: 10.5px; letter-spacing: .14em; color: var(--mute); }
+.oa-kv-big { font-family: var(--serif); font-size: 32px; margin-top: 4px; }
+.oa-kv-big small { font-family: var(--sans); font-size: 14px; color: var(--mute); }
+.oa-note { margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: #34363c; white-space: pre-wrap; }
+.oa-focus { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.oa-status { font-size: 11px; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: var(--warm); color: var(--mute); white-space: nowrap; }
+.oa-status.ok { background: #e6efe4; color: var(--ok); }
+.oa-status.draft { background: var(--gold-l); color: var(--gold-d); }
+.oa-form { padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
+.oa-label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; letter-spacing: .06em; color: var(--mute); }
+.oa .oa-input { font: inherit; font-size: 16px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; width: 100%; resize: vertical; letter-spacing: 0; }
+.oa .oa-input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.oa .oa-select { width: auto; padding: 8px 10px; font-size: 14px; }
+.oa-metric-form { display: grid; grid-template-columns: 1fr 90px; gap: 8px; }
+.oa-metric-form .oa-select { grid-column: 1 / -1; width: 100%; }
+.oa-metric { border-top: 1px solid var(--line); padding: 10px 0; }
+.oa-metric summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; font-size: 15px; }
+.oa-metric summary::-webkit-details-marker { display: none; }
+.oa-metric summary b { font-weight: 500; min-width: 84px; text-align: right; }
+.oa .oa-del { color: #9a5b4e; font-size: 18px; padding: 0 4px; margin-left: 6px; }
+.oa .oa-link { color: var(--gold-d); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; align-self: flex-start; }
+.oa-metric-form { grid-template-columns: 1fr 1fr; }
+.oa-metric-form .oa-pill { grid-column: 1 / -1; text-align: center; padding: 11px; }
+.oa .oa-input { min-width: 0; box-sizing: border-box; }
+.oa-duo .oa-label { min-width: 0; }
+.oa .oa-withdraw { align-self: center; font-size: 12px; color: var(--mute); text-decoration: underline; text-underline-offset: 3px; padding: 8px; }

@@ -23,9 +23,13 @@ export function TabBar() {
     <nav className="tab-bar" aria-label="Primary">
       <div className="tab-inner">
         {TABS.map((t) => {
-          const href = t.id === "coach" && isCoach ? "/admin/messages" : t.href;
-          const active = t.id === "coach" && isCoach ? pathname.startsWith("/admin/messages") : t.id === "home" && pathname.startsWith("/admin/messages") ? false : t.match(pathname);
-          const label = t.id === "coach" && isCoach ? "Inbox" : t.label;
+          const coachHref: Record<string, string> = { coach: "/admin/messages", brief: "/admin/briefs" };
+          const href = isCoach && coachHref[t.id] ? coachHref[t.id] : t.href;
+          const inCoachArea = pathname.startsWith("/admin/messages") || pathname.startsWith("/admin/briefs");
+          const active = isCoach && coachHref[t.id]
+            ? pathname.startsWith(coachHref[t.id]) || (t.id === "brief" && pathname.startsWith("/brief"))
+            : t.id === "home" && inCoachArea ? false : t.match(pathname);
+          const label = t.id === "coach" && isCoach ? "Inbox" : t.id === "brief" && isCoach ? "Briefs" : t.label;
           return (
             <Link key={t.id} href={href} className={`tab${active ? " active" : ""}`} aria-current={active ? "page" : undefined}>
               <svg viewBox="0 0 24 24" aria-hidden="true">{TabIcons[t.id]}</svg>
