@@ -50,7 +50,7 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
     setCnotes(data.profile.coach_notes ?? "");
   }, [data?.profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [kind, setKind] = useState<MetricKind>("resting_hr");
+  const [kind, setKind] = useState<MetricKind>("avg_hr");
   const [val, setVal] = useState("");
   const [on, setOn] = useState(madridDateOffsetISO(0));
   const [busy, setBusy] = useState<string | null>(null);
@@ -147,11 +147,11 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
             {weeks.map((w) => <option key={w} value={w}>{w === thisWs ? `This week · ${weekLabel(w)}` : weekLabel(w)}</option>)}
           </select>
         </div>
-        <label className="oa-label">Coach&rsquo;s note
-          <textarea className="oa-input" rows={6} maxLength={4000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="How the week went: sessions, recovery, what you noticed." />
+        <label className="oa-label">How the week went
+          <textarea className="oa-input" rows={6} maxLength={4000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Sessions, effort, energy, what went well." />
         </label>
-        <label className="oa-label">Focus for next week
-          <textarea className="oa-input" rows={3} maxLength={1000} value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="One or two clear priorities." />
+        <label className="oa-label">Points to improve
+          <textarea className="oa-input" rows={3} maxLength={1000} value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="One or two clear points for next week." />
         </label>
         <div className="oa-row" style={{ justifyContent: "flex-start", gap: 10, flexWrap: "wrap" }}>
           {current?.published ? (

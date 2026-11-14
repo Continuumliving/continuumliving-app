@@ -3,7 +3,7 @@
 -- Personal Health Brief, written by the coach.
 --   * health_profiles : one row per resident (consent, goal, intake,
 --                       next review)
---   * health_metrics  : measurements over time (resting HR, HRV, ...)
+--   * health_metrics  : measurements over time (session heart rate, weight, body fat)
 --   * weekly_briefs   : the coach's weekly note + next week's focus
 -- Health data is special-category data (GDPR art. 9): the coach can
 -- only record metrics after the resident has given explicit consent
@@ -25,12 +25,18 @@ create table if not exists health_profiles (
 create table if not exists health_metrics (
   id           uuid primary key default gen_random_uuid(),
   resident_id  uuid not null references profiles(id) on delete cascade,
-  kind         text not null check (kind in ('resting_hr','hrv','weight','body_fat','vo2max','sleep','grip','blood_pressure_sys','blood_pressure_dia','waist')),
+  kind         text not null,
   value        numeric not null check (value > 0 and value < 1000),
   measured_on  date not null default current_date,
   note         text check (char_length(note) <= 300),
   created_at   timestamptz not null default now()
 );
+-- what the coach can actually measure: heart rate during sessions
+-- (average / maximum, from the heart-rate monitors) and body composition
+alter table health_metrics drop constraint if exists health_metrics_kind_check;
+alter table health_metrics add constraint health_metrics_kind_check
+  check (kind in ('avg_hr','max_hr','weight','body_fat'));
+
 create index if not exists health_metrics_resident_idx on health_metrics (resident_id, kind, measured_on);
 
 create table if not exists weekly_briefs (

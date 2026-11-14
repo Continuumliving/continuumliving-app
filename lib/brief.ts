@@ -1,21 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { madridDateOffsetISO, todayMadridISO } from "./dates";
 
-export type MetricKind =
-  | "resting_hr" | "hrv" | "weight" | "body_fat" | "vo2max"
-  | "sleep" | "grip" | "blood_pressure_sys" | "blood_pressure_dia" | "waist";
+export type MetricKind = "avg_hr" | "max_hr" | "weight" | "body_fat";
 
 export const METRICS: Record<MetricKind, { label: string; unit: string; better: "up" | "down" | "none" }> = {
-  resting_hr: { label: "Resting heart rate", unit: "bpm", better: "down" },
-  hrv: { label: "Heart-rate variability", unit: "ms", better: "up" },
-  vo2max: { label: "VO₂ max", unit: "ml/kg/min", better: "up" },
-  sleep: { label: "Average sleep", unit: "h", better: "up" },
+  avg_hr: { label: "Average heart rate in sessions", unit: "bpm", better: "none" },
+  max_hr: { label: "Maximum heart rate in sessions", unit: "bpm", better: "none" },
   weight: { label: "Weight", unit: "kg", better: "none" },
   body_fat: { label: "Body fat", unit: "%", better: "down" },
-  waist: { label: "Waist", unit: "cm", better: "down" },
-  grip: { label: "Grip strength", unit: "kg", better: "up" },
-  blood_pressure_sys: { label: "Blood pressure (systolic)", unit: "mmHg", better: "down" },
-  blood_pressure_dia: { label: "Blood pressure (diastolic)", unit: "mmHg", better: "down" },
 };
 export const METRIC_ORDER = Object.keys(METRICS) as MetricKind[];
 

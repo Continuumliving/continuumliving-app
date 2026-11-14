@@ -71,8 +71,8 @@ export default function BriefPage() {
         <div className="oa-card oa-empty" style={{ gap: 12 }}>
           <div className="oa-eyebrow">Your consent</div>
           <p>
-            To personalise your programme, your coach records health measurements such as resting heart rate, HRV and
-            body composition. They are visible only to you and your coach, are never shared with the building or the
+            To personalise your programme, your coach records your heart rate during sessions, your weight and body
+            fat percentage. They are visible only to you and your coach, are never shared with the building or the
             developer, and you can delete them at any time here.
           </p>
           <button className="oa-pill gold" style={{ alignSelf: "flex-start", padding: "11px 18px" }} onClick={giveConsent} disabled={busy}>
@@ -108,11 +108,11 @@ export default function BriefPage() {
           <div style={{ minWidth: 0, flex: 1 }}>
             <div className="oa-eyebrow">Coach&rsquo;s note{latest ? ` · ${latest.week_start === ws ? "this week" : weekLabel(latest.week_start)}` : ""}</div>
             <p className="oa-note">
-              {isLoading ? "…" : latest?.note || "Your first brief follows your intake and baseline tests. Each Sunday your coach writes how your week went and what to focus on next."}
+              {isLoading ? "…" : latest?.note || "Each week your coach writes how your week went and what to improve. Your first note follows your intake."}
             </p>
             {latest?.focus && (
               <div className="oa-focus">
-                <div className="oa-eyebrow" style={{ color: "var(--mute)" }}>Focus for next week</div>
+                <div className="oa-eyebrow" style={{ color: "var(--mute)" }}>Points to improve</div>
                 <p className="oa-note" style={{ marginTop: 6 }}>{latest.focus}</p>
               </div>
             )}
@@ -166,7 +166,7 @@ export default function BriefPage() {
                 {openPast === b.id && (
                   <>
                     <p className="oa-note" style={{ margin: 0 }}>{b.note}</p>
-                    {b.focus && <p className="oa-note" style={{ margin: 0, color: "var(--mute)" }}>Focus: {b.focus}</p>}
+                    {b.focus && <p className="oa-note" style={{ margin: 0, color: "var(--mute)" }}>To improve: {b.focus}</p>}
                   </>
                 )}
               </div>
