@@ -8,7 +8,7 @@ import { Sparkline } from "@/components/oa/Sparkline";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { madridDateOffsetISO } from "@/lib/dates";
 import {
-  METRICS, METRIC_ORDER, fetchResidentBrief, fmtDate, fmtValue, summarise, thisWeekStart, weekLabel,
+  METRICS, METRIC_ORDER, addMonthsISO, fetchResidentBrief, fmtDate, fmtValue, monthLabel, summarise, thisMonthStart,
   type MetricKind,
 } from "@/lib/brief";
 
@@ -28,7 +28,7 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
   });
   const { data, mutate, error } = useSWR(`brief:${rid}`, () => fetchResidentBrief(sb, rid), { revalidateOnMount: true, revalidateIfStale: true });
 
-  const thisWs = thisWeekStart();
+  const thisWs = thisMonthStart();
   const [ws, setWs] = useState(thisWs);
   const current = useMemo(() => data?.briefs.find((b) => b.week_start === ws), [data, ws]);
   const [note, setNote] = useState("");
@@ -121,7 +121,7 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
     await mutate();
   }
 
-  const weeks = Array.from(new Set([thisWs, addDays(thisWs, -7), ...(data?.briefs.map((b) => b.week_start) ?? [])])).sort().reverse();
+  const weeks = Array.from(new Set([thisWs, addMonthsISO(thisWs, -1), ...(data?.briefs.map((b) => b.week_start) ?? [])])).sort().reverse();
 
   return (
     <main className="oa">
@@ -142,16 +142,16 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
       {/* weekly brief */}
       <section className="oa-card oa-form">
         <div className="oa-row">
-          <div className="oa-eyebrow">Weekly brief</div>
-          <select className="oa-input oa-select" value={ws} onChange={(e) => setWs(e.target.value)} aria-label="Week">
-            {weeks.map((w) => <option key={w} value={w}>{w === thisWs ? `This week · ${weekLabel(w)}` : weekLabel(w)}</option>)}
+          <div className="oa-eyebrow">Monthly brief</div>
+          <select className="oa-input oa-select" value={ws} onChange={(e) => setWs(e.target.value)} aria-label="Month">
+            {weeks.map((w) => <option key={w} value={w}>{w === thisWs ? `This month · ${monthLabel(w)}` : monthLabel(w)}</option>)}
           </select>
         </div>
-        <label className="oa-label">How the week went
+        <label className="oa-label">How the month went
           <textarea className="oa-input" rows={6} maxLength={4000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Sessions, effort, energy, what went well." />
         </label>
         <label className="oa-label">Points to improve
-          <textarea className="oa-input" rows={3} maxLength={1000} value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="One or two clear points for next week." />
+          <textarea className="oa-input" rows={3} maxLength={1000} value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="One or two clear points for next month." />
         </label>
         <div className="oa-row" style={{ justifyContent: "flex-start", gap: 10, flexWrap: "wrap" }}>
           {current?.published ? (
@@ -232,6 +232,3 @@ export default function AdminResidentBrief({ params }: { params: { id: string } 
   );
 }
 
-function addDays(iso: string, n: number): string {
-  return new Date(Date.parse(`${iso}T12:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
-}

@@ -121,7 +121,7 @@ export default async function AdminIndex() {
         Coach inbox · messages from residents
       </Link>
       <Link href="/admin/briefs" className="btn" style={{ margin: "0 0 18px", background: "var(--gold)", color: "var(--navy)" }}>
-        Health briefs · write this week
+        Health briefs · this month
       </Link>
 
       {/* ── Topline ── */}

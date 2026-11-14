@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   if (isBrief && !fromCoach) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const payload = JSON.stringify(
     isBrief
-      ? { title: "Your weekly brief is ready", body: "Your coach has written up your week.", url: "/brief", tag: `brief-${residentId}` }
+      ? { title: "Your monthly brief is ready", body: "Your coach has written up your month.", url: "/brief", tag: `brief-${residentId}` }
       : {
           title: fromCoach ? "Your coach replied" : `New message from ${sender?.first_name || "a resident"}`,
           body: (body.preview || "").toString().slice(0, 140),

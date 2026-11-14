@@ -99,7 +99,7 @@ export default function HomePage() {
         </div>
         <Link href="/brief" className="oa-card oa-stat oa-dark">
           <div className="k">Health brief</div>
-          <div className="oa-big" style={{ marginTop: 12 }}>Weekly</div>
+          <div className="oa-big" style={{ marginTop: 12 }}>Monthly</div>
           <div style={{ fontSize: 12.5, color: "#cfcac0", marginTop: 4 }}>Written by your coach</div>
         </Link>
       </div>

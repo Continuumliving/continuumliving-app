@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { getRequestClient } from "@/lib/auth-cache";
-import { fmtDate, thisWeekStart, weekLabel } from "@/lib/brief";
+import { fmtDate, monthLabel, thisMonthStart } from "@/lib/brief";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminBriefs() {
   const sb = getRequestClient();
-  const ws = thisWeekStart();
+  const ws = thisMonthStart();
   const [people, profiles, briefs] = await Promise.all([
     sb.from("profiles").select("id, first_name, last_name, unit_number, role").order("first_name"),
     sb.from("health_profiles").select("resident_id, consent_at, next_review"),
@@ -23,8 +23,8 @@ export default async function AdminBriefs() {
       <Link href="/admin" className="oa-back">‹ Admin</Link>
       <div>
         <div className="oa-eyebrow">Health briefs</div>
-        <h1 className="oa-h1">This week</h1>
-        <div className="oa-sub" style={{ marginTop: 4 }}>{weekLabel(ws)} · {done} of {residents.length} published</div>
+        <h1 className="oa-h1">{monthLabel(ws)}</h1>
+        <div className="oa-sub" style={{ marginTop: 4 }}>{done} of {residents.length} published this month</div>
       </div>
       {failed && <div className="oa-card oa-empty"><p>Briefs could not be loaded. Has migration 0009 been run in Supabase?</p></div>}
       {!failed && residents.length === 0 && <div className="oa-card oa-empty"><p>No residents yet.</p></div>}

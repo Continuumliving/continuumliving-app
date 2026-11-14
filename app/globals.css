@@ -1246,3 +1246,4 @@ body { background: var(--paper); }
 .oa .oa-input { min-width: 0; box-sizing: border-box; }
 .oa-duo .oa-label { min-width: 0; }
 .oa .oa-withdraw { align-self: center; font-size: 12px; color: var(--mute); text-decoration: underline; text-underline-offset: 3px; padding: 8px; }
+.oa, .oa * { font-variant-numeric: lining-nums; }

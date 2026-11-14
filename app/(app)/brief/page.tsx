@@ -5,10 +5,9 @@ import useSWR from "swr";
 import { Sparkline } from "@/components/oa/Sparkline";
 import { useBookings, useClasses, useProfile } from "@/lib/data-context";
 import { madridDateOffsetISO } from "@/lib/dates";
-import { fetchMyBrief, fmtDate, fmtValue, summarise, thisWeekStart, weekLabel } from "@/lib/brief";
+import { fetchMyBrief, fmtDate, fmtValue, monthLabel, summarise, thisMonthStart } from "@/lib/brief";
 import { getBrowserClient } from "@/lib/supabase/client";
 
-const DOW = ["M", "T", "W", "T", "F", "S", "S"];
 
 export default function BriefPage() {
   const profile = useProfile();
@@ -22,23 +21,25 @@ export default function BriefPage() {
   const [openPast, setOpenPast] = useState<string | null>(null);
   if (!profile) return null;
 
-  const ws = thisWeekStart();
+  const ms = thisMonthStart();
+  const month = ms.slice(0, 7);
   const today = madridDateOffsetISO(0);
-  const monOffset = Math.round((Date.parse(`${ws}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)) / 864e5);
-  const week = Array.from({ length: 7 }, (_, i) => madridDateOffsetISO(monOffset + i));
   const byId = new Map(classes.map((c) => [c.id, c]));
-  const mine = bookings.filter((b) => week.includes(b.session_date) && byId.has(b.class_id));
+  const mine = bookings.filter((b) => b.session_date.startsWith(month) && b.session_date <= today && byId.has(b.class_id));
   const hi = mine.filter((b) => byId.get(b.class_id)!.intensity === "high").length;
   const lo = mine.length - hi;
-  const balance = mine.length === 0 ? "—" : hi > 0 && lo > 0 && Math.abs(hi - lo) <= 2 ? "Ideal" : hi > lo ? "Push-heavy" : "Recovery-heavy";
-  const load = week.map((iso) => {
-    const day = mine.filter((b) => b.session_date === iso).map((b) => byId.get(b.class_id)!);
-    const h = day.filter((c) => c.intensity === "high").length;
-    return { h, l: day.length - h };
+  const balance = mine.length === 0 ? "—" : hi > 0 && lo > 0 && Math.abs(hi - lo) <= Math.max(2, mine.length * 0.25) ? "Ideal" : hi > lo ? "Push-heavy" : "Recovery-heavy";
+  // sessions per week of the month (week 1 = days 1–7, …)
+  const weeks = [0, 1, 2, 3, 4].map((w) => {
+    const inW = mine.filter((b) => Math.floor((Number(b.session_date.slice(8, 10)) - 1) / 7) === w).map((b) => byId.get(b.class_id)!);
+    const h = inW.filter((c) => c.intensity === "high").length;
+    return { h, l: inW.length - h };
   });
-  const maxLoad = Math.max(1, ...load.map((x) => x.h * 2 + x.l));
+  const daysInMonth = new Date(Date.UTC(Number(ms.slice(0, 4)), Number(ms.slice(5, 7)), 0)).getUTCDate();
+  const shownWeeks = weeks.slice(0, Math.ceil(daysInMonth / 7));
+  const maxW = Math.max(1, ...shownWeeks.map((x) => x.h + x.l));
   const joined = new Date(profile.joined_at);
-  const weekNo = Math.max(1, Math.floor((Date.now() - joined.getTime()) / (7 * 864e5)) + 1);
+  const monthNo = Math.max(1, (Number(month.slice(0, 4)) - joined.getUTCFullYear()) * 12 + Number(month.slice(5, 7)) - (joined.getUTCMonth() + 1) + 1);
 
   const consent = !!data?.profile.consent_at;
   const latest = data?.briefs[0];
@@ -63,8 +64,8 @@ export default function BriefPage() {
     <main className="oa">
       <div>
         <div className="oa-eyebrow">Personal Health Brief</div>
-        <h1 className="oa-h1">Week {weekNo}</h1>
-        <div className="oa-sub" style={{ marginTop: 4 }}>{weekLabel(ws)}</div>
+        <h1 className="oa-h1">{monthLabel(ms).split(" ")[0]}</h1>
+        <div className="oa-sub" style={{ marginTop: 4 }}>Month {monthNo} of your programme</div>
       </div>
 
       {data && !consent && (
@@ -82,21 +83,26 @@ export default function BriefPage() {
       )}
 
       <article className="oa-card" style={{ padding: "22px 20px", display: "flex", flexDirection: "column", gap: 18 }}>
-        <div className="oa-eyebrow" style={{ color: "var(--mute)" }}>This week</div>
+        <div className="oa-eyebrow" style={{ color: "var(--mute)" }}>This month so far</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, borderBottom: "1px solid var(--line)", paddingBottom: 16, marginTop: -8 }}>
-          <div><div className="oa-k">SESSIONS</div><div className="oa-kv-big">{mine.length}<small> / 5</small></div></div>
+          <div><div className="oa-k">SESSIONS</div><div className="oa-kv-big">{mine.length}</div></div>
           <div><div className="oa-k">HIGH · LOW</div><div className="oa-kv-big">{hi}<small> · {lo}</small></div></div>
           <div><div className="oa-k">BALANCE</div><div className="oa-kv-big" style={{ fontSize: balance.length > 6 ? 20 : 30, marginTop: balance.length > 6 ? 10 : 4, lineHeight: 1.15 }}>{balance}</div></div>
         </div>
         <div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 110, borderBottom: "1px solid var(--line)" }}>
-            {load.map((x, i) => {
-              const v = x.h * 2 + x.l;
-              return <div key={i} style={{ flex: 1, height: `${v === 0 ? 3 : Math.max(18, (v / maxLoad) * 100)}%`, borderRadius: "4px 4px 0 0", background: v === 0 ? "var(--line)" : x.h > 0 ? "var(--gold)" : "var(--lo)" }} />;
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 14, height: 110, borderBottom: "1px solid var(--line)" }}>
+            {shownWeeks.map((x, i) => {
+              const t = x.h + x.l;
+              return (
+                <div key={i} style={{ flex: 1, height: `${t === 0 ? 3 : Math.max(14, (t / maxW) * 100)}%`, display: "flex", flexDirection: "column", borderRadius: "4px 4px 0 0", overflow: "hidden", background: "var(--line)" }}>
+                  {t > 0 && <div style={{ flex: x.h, background: "var(--gold)" }} />}
+                  {t > 0 && <div style={{ flex: x.l, background: "var(--lo)" }} />}
+                </div>
+              );
             })}
           </div>
-          <div style={{ display: "flex", gap: 10, fontSize: 11, letterSpacing: ".08em", color: "var(--mute)", marginTop: 6 }}>
-            {DOW.map((dd, i) => <span key={i} style={{ flex: 1, textAlign: "center" }}>{dd}</span>)}
+          <div style={{ display: "flex", gap: 14, fontSize: 11, letterSpacing: ".08em", color: "var(--mute)", marginTop: 6 }}>
+            {shownWeeks.map((_, i) => <span key={i} style={{ flex: 1, textAlign: "center" }}>WEEK {i + 1}</span>)}
           </div>
         </div>
       </article>
@@ -106,9 +112,9 @@ export default function BriefPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="oa-av" src="/img/coach.jpg" alt="" />
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div className="oa-eyebrow">Coach&rsquo;s note{latest ? ` · ${latest.week_start === ws ? "this week" : weekLabel(latest.week_start)}` : ""}</div>
+            <div className="oa-eyebrow">Coach&rsquo;s note{latest ? ` · ${monthLabel(latest.week_start)}` : ""}</div>
             <p className="oa-note">
-              {isLoading ? "…" : latest?.note || "Each week your coach writes how your week went and what to improve. Your first note follows your intake."}
+              {isLoading ? "…" : latest?.note || "Each month your coach writes how your month went and what to improve. Your first brief follows your first month."}
             </p>
             {latest?.focus && (
               <div className="oa-focus">
@@ -122,7 +128,7 @@ export default function BriefPage() {
 
       {consent && summary.length > 0 && (
         <>
-          <div className="oa-sec"><h2 className="oa-h2">Your measurements</h2><span className="oa-sub">since intake</span></div>
+          <div className="oa-sec"><h2 className="oa-h2">Your measurements</h2><span className="oa-sub">heart rate during sessions</span></div>
           <div className="oa-card oa-list">
             {summary.map((s) => (
               <div className="oa-li" key={s.kind}>
@@ -160,7 +166,7 @@ export default function BriefPage() {
             {past.map((b) => (
               <div key={b.id} className="oa-li" style={{ flexDirection: "column", alignItems: "stretch", gap: 8 }}>
                 <button className="oa-row" onClick={() => setOpenPast(openPast === b.id ? null : b.id)} aria-expanded={openPast === b.id}>
-                  <span style={{ fontWeight: 500 }}>{weekLabel(b.week_start)}</span>
+                  <span style={{ fontWeight: 500 }}>{monthLabel(b.week_start)}</span>
                   <span className="oa-meta">{openPast === b.id ? "Close" : "Read"}</span>
                 </button>
                 {openPast === b.id && (

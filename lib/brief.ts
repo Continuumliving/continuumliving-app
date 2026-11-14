@@ -4,8 +4,8 @@ import { madridDateOffsetISO, todayMadridISO } from "./dates";
 export type MetricKind = "avg_hr" | "max_hr" | "weight" | "body_fat";
 
 export const METRICS: Record<MetricKind, { label: string; unit: string; better: "up" | "down" | "none" }> = {
-  avg_hr: { label: "Average heart rate in sessions", unit: "bpm", better: "none" },
-  max_hr: { label: "Maximum heart rate in sessions", unit: "bpm", better: "none" },
+  avg_hr: { label: "Average heart rate", unit: "bpm", better: "none" },
+  max_hr: { label: "Maximum heart rate", unit: "bpm", better: "none" },
   weight: { label: "Weight", unit: "kg", better: "none" },
   body_fat: { label: "Body fat", unit: "%", better: "down" },
 };
@@ -36,6 +36,22 @@ export interface WeeklyBrief {
   published: boolean;
   published_at: string | null;
   updated_at: string;
+}
+
+/** First day of the current Madrid month (briefs are monthly; stored in week_start). */
+export function thisMonthStart(): string {
+  return `${todayMadridISO().slice(0, 7)}-01`;
+}
+
+export function addMonthsISO(iso: string, n: number): string {
+  const [y, m] = iso.split("-").map(Number);
+  const d = new Date(Date.UTC(y, m - 1 + n, 1, 12));
+  return d.toISOString().slice(0, 10);
+}
+
+export function monthLabel(monthStart: string): string {
+  const [y, m] = monthStart.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, 1, 12)));
 }
 
 /** Monday of the current Madrid week. */
