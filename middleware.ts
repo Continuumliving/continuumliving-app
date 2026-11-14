@@ -14,6 +14,6 @@ export const config = {
      * - favicon.ico
      * - public image/icon routes
      */
-    "/((?!_next/static|_next/image|favicon.ico|icon|apple-icon|manifest.webmanifest).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon|apple-icon|manifest.webmanifest|sw.js|img/).*)",
   ],
 };

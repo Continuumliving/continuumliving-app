@@ -12,7 +12,13 @@ export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(
+    params.get("notice") === "link"
+      ? "That link has expired or was already used. Request a new one below."
+      : params.get("notice") === "reset"
+        ? "Your password has been changed. Sign in with your new password."
+        : null,
+  );
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -100,6 +106,7 @@ export function SignInForm() {
         <button type="submit" className="btn btn-terracotta" disabled={busy}>
           {busy ? "Entering…" : "Enter"}
         </button>
+        <Link href="/forgot" className="auth-forgot">Forgot your password?</Link>
       </form>
       <div className="auth-footer">
         First time?

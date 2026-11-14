@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { fetchThread, markThreadRead, sendMessage, timeLabel, type CoachMessage } from "@/lib/messages";
+import { notifyThread } from "@/lib/push";
+import { useSWRConfig } from "swr";
+import { UNREAD_KEY } from "@/lib/unread";
 
 interface Props {
   residentId: string;
@@ -21,6 +24,7 @@ export function Thread({ residentId, meId, otherName, otherAvatar, emptyText, pl
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const count = useRef(0);
+  const { mutate } = useSWRConfig();
 
   const load = useCallback(async () => {
     try {
@@ -28,12 +32,15 @@ export function Thread({ residentId, meId, otherName, otherAvatar, emptyText, pl
       const rows = await fetchThread(sb, residentId);
       setMsgs(rows);
       setError(null);
-      if (rows.some((m) => !m.read_at && m.sender_id !== meId)) markThreadRead(sb, residentId);
+      if (rows.some((m) => !m.read_at && m.sender_id !== meId)) {
+        await markThreadRead(sb, residentId);
+        mutate(UNREAD_KEY);
+      }
     } catch {
       setError("Messages could not be loaded just now.");
       setMsgs((m) => m ?? []);
     }
-  }, [residentId, meId]);
+  }, [residentId, meId, mutate]);
 
   useEffect(() => {
     load();
@@ -64,6 +71,7 @@ export function Thread({ residentId, meId, otherName, otherAvatar, emptyText, pl
       const row = await sendMessage(getBrowserClient(), residentId, meId, body);
       setMsgs((m) => [...(m ?? []), row]);
       setText("");
+      notifyThread(residentId, body);
     } catch {
       setError("Your message was not sent. Please try again.");
     } finally {

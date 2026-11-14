@@ -44,10 +44,13 @@ export async function updateSession(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
-  const isAuthPage = pathname === "/signin" || pathname === "/signup";
+  const isAuthPage = pathname === "/signin" || pathname === "/signup" || pathname === "/forgot";
   const isPublic =
     isAuthPage ||
     pathname === "/offline" ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/img/") ||
+    pathname === "/sw.js" ||
     pathname === "/env-check" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/icon") ||

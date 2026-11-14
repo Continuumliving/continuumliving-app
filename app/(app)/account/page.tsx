@@ -5,6 +5,7 @@ import { useState } from "react";
 import { LogoMark } from "@/components/oa/Icons";
 import { SignOutButton } from "@/components/SignOutButton";
 import { useActions } from "@/components/oa/useActions";
+import { PushToggle } from "@/components/oa/PushToggle";
 import { useBookings, useClasses, useProfile, useRsvps, useEvents } from "@/lib/data-context";
 import { formatShortDate, todayMadridISO } from "@/lib/dates";
 import { MONTH_SHORT } from "@/lib/format";
@@ -105,6 +106,7 @@ export default function AccountPage() {
 
       <div className="oa-sec"><h2 className="oa-h2">Settings</h2></div>
       <div className="oa-card oa-list">
+        <PushToggle profileId={profile.id} />
         <div className="oa-kv"><span>Email</span><span>{profile.email}</span></div>
         <a className="oa-kv" href="https://wa.me/34609019874" target="_blank" rel="noopener noreferrer"><span>Concierge</span><span>WhatsApp ›</span></a>
         <div className="oa-kv"><span>Language</span><span>English</span></div>
