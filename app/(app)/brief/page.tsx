@@ -53,7 +53,7 @@ export default function BriefPage() {
     setBusy(false);
   }
   async function withdraw() {
-    if (!window.confirm("Withdraw consent? Your recorded measurements will be deleted. Your coach's weekly notes stay.")) return;
+    if (!window.confirm("Withdraw consent? Your recorded measurements will be deleted. Your coach's monthly notes stay.")) return;
     setBusy(true);
     await getBrowserClient().rpc("withdraw_health_consent");
     await mutate();
