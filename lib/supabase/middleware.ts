@@ -36,8 +36,12 @@ export async function updateSession(request: NextRequest) {
   // and let the page-level guards handle the redirect.
   let user: { id: string } | null = null;
   try {
-    const { data } = await supabase.auth.getUser();
-    user = data.user ?? null;
+    // Routing only: read the session from the cookie (no network round
+    // trip; it still refreshes an expired token). Every data request is
+    // verified by Supabase itself via row-level security, and server
+    // pages that need the user call getUser() themselves.
+    const { data } = await supabase.auth.getSession();
+    user = data.session?.user ?? null;
   } catch (err) {
     console.error("[middleware] auth.getUser failed:", err);
     return response;

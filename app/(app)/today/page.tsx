@@ -54,7 +54,7 @@ export default function HomePage() {
       {next ? (
         <Link href="/classes" className="oa-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={classImage(next.c)} alt="" />
+          <img fetchPriority="high" decoding="async" src={classImage(next.c)} alt="" />
           <div className="oa-shade" />
           <div className="txt">
             <div className="oa-eyebrow g">Next · {formatLongDate(next.b.session_date).split(" ").slice(0, 2).join(" ")} {next.c.time}</div>
@@ -70,7 +70,7 @@ export default function HomePage() {
       ) : (
         <Link href="/classes" className="oa-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/gymv.jpg" alt="" />
+          <img fetchPriority="high" decoding="async" src="/img/gymv.webp" alt="" />
           <div className="oa-shade" />
           <div className="txt">
             <div className="oa-eyebrow g">This week</div>
@@ -106,7 +106,7 @@ export default function HomePage() {
 
       <Link href="/coach" className="oa-card oa-msg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="oa-av" src="/img/coach.jpg" alt="" />
+        <img loading="lazy" decoding="async" className="oa-av" src="/img/coach.webp" alt="" />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 15, fontWeight: 500 }}>Tomash · Coach</div>
           <div className="oa-sub" style={{ fontSize: 13, marginTop: 2 }}>Questions, a private session, or a change of plan.</div>

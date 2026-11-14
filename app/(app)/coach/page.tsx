@@ -10,7 +10,7 @@ export default function CoachPage() {
     <main className="oa oa-chat">
       <div className="oa-card oa-coachcard">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/coach.jpg" alt="Tomash Marko" />
+        <img loading="lazy" decoding="async" src="/img/coach.webp" alt="Tomash Marko" />
         <div>
           <h1 className="oa-h2">Tomash Marko</h1>
           <div className="oa-sub" style={{ fontSize: 13, marginTop: 3 }}>Your coach · usually replies the same day</div>
@@ -20,7 +20,7 @@ export default function CoachPage() {
         residentId={profile.id}
         meId={profile.id}
         otherName="Tomash"
-        otherAvatar="/img/coach.jpg"
+        otherAvatar="/img/coach.webp"
         emptyText="Ask for a private session, change your plan, or tell me how you feel. Only you and your coach can read this conversation."
         placeholder="Message your coach"
       />

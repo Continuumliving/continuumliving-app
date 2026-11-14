@@ -33,7 +33,7 @@ export default function EventsPage() {
             <article key={e.id} className="oa-card oa-ev">
               <div className="oa-ph">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={eventImage(e)} alt="" />
+                <img loading="lazy" decoding="async" src={eventImage(e)} alt="" />
               </div>
               <div className="oa-body">
                 <div className="oa-eyebrow">{eventWhen(e)}</div>

@@ -1274,3 +1274,21 @@ body { background: var(--paper); }
 .oa .oa-seg button { min-width: 0; padding: 10px 2px; text-transform: none; letter-spacing: 0; }
 .oa .oa-check { text-transform: none; letter-spacing: 0; font-size: 15px; }
 .oa .oa-check input { appearance: auto; -webkit-appearance: checkbox; width: 20px; height: 20px; padding: 0; border: 0; margin: 0; flex: none; }
+
+/* ---------- native feel ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body { overscroll-behavior-y: none; }
+.oa a, .oa button, .tab-bar a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.oa main, main.oa { animation: oaIn .22s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes oaIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.oa .oa-card, .oa .oa-pill, .oa .oa-day, .tab-bar .tab, .oa .oa-li { transition: transform .12s ease, opacity .12s ease, background .2s, color .2s; }
+.oa a.oa-card:active, .oa a.oa-hero:active, .oa .oa-li:active { transform: scale(.985); opacity: .92; }
+.oa .oa-pill:active, .oa .oa-day:active, .oa .oa-send:active { transform: scale(.94); }
+.tab-bar .tab:active { transform: scale(.9); }
+.oa-card, .oa-hero { contain: layout paint; }
+.oa img { background: var(--warm); }
+@media (prefers-reduced-motion: reduce) { main.oa { animation: none; } .oa *:active { transform: none !important; } }
+.oa-skel { animation: none !important; }
+.oa-skel .sk, .oa-skel .sk-card { background: linear-gradient(90deg, var(--warm) 0%, #f3ede2 50%, var(--warm) 100%); background-size: 200% 100%; animation: oaShimmer 1.2s ease-in-out infinite; border-radius: 8px; box-shadow: none; }
+.oa-skel .sk-card { border-radius: 22px; }
+@keyframes oaShimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }

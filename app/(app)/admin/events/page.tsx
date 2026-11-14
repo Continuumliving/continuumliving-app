@@ -23,7 +23,7 @@ export default async function AdminEventsPage() {
   const row = (e: EventRow) => (
     <Link key={e.id} href={`/admin/events/${e.id}`} className="oa-li">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={eventImage(e)} alt="" style={{ width: 48, height: 48, borderRadius: 12, objectFit: "cover" }} />
+      <img loading="lazy" decoding="async" src={eventImage(e)} alt="" style={{ width: 48, height: 48, borderRadius: 12, objectFit: "cover" }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 500 }}>{e.title}</div>
         <div className="oa-meta">{eventWhen(e)} · {e.venue}</div>

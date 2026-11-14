@@ -64,7 +64,7 @@ export default function ClassesPage() {
             <article key={c.id} className="oa-card oa-cls">
               <div className="oa-ph">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={classImage(c)} alt="" />
+                <img loading="lazy" decoding="async" src={classImage(c)} alt="" />
                 <span className={`oa-tag ${hi ? "hi" : "lo"}`}>{hi ? "HIGH" : "LOW"}</span>
               </div>
               <div className="oa-body">
@@ -94,7 +94,7 @@ export default function ClassesPage() {
 
       <Link href="/coach" className="oa-card oa-slim">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/gymv.jpg" alt="" />
+        <img loading="lazy" decoding="async" src="/img/gymv.webp" alt="" />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="oa-meta">On request · Studio or residence</div>
           <div style={{ fontSize: 17, fontWeight: 500, marginTop: 3 }}>Private 1:1 Session</div>

@@ -95,7 +95,7 @@ export function Thread({ residentId, meId, otherName, otherAvatar, emptyText, pl
               {showHead && (
                 <div className="oa-bubble-head">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {otherAvatar && <img src={otherAvatar} alt="" />}
+                  {otherAvatar && <img loading="lazy" decoding="async" src={otherAvatar} alt="" />}
                   <span>{otherName}</span>
                 </div>
               )}

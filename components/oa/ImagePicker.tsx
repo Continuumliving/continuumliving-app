@@ -15,7 +15,7 @@ export function ImagePicker({ value, onChange }: { value: string; onChange: (v: 
           onClick={() => onChange(k)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/img/${k}.jpg`} alt={k} />
+          <img loading="lazy" decoding="async" src={`/img/${k}.webp`} alt={k} />
         </button>
       ))}
     </div>

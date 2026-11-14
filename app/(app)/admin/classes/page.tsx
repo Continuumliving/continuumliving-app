@@ -31,7 +31,7 @@ export default async function AdminClassesPage() {
             {classes.filter((c) => c.day === d).map((c) => (
               <Link key={c.id} href={`/admin/classes/${c.id}`} className="oa-li">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={classImage(c)} alt="" style={{ width: 48, height: 48, borderRadius: 12, objectFit: "cover", opacity: c.active ? 1 : 0.4 }} />
+                <img loading="lazy" decoding="async" src={classImage(c)} alt="" style={{ width: 48, height: 48, borderRadius: 12, objectFit: "cover", opacity: c.active ? 1 : 0.4 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 500 }}>{c.title}{!c.active && <span className="oa-meta"> · hidden</span>}</div>
                   <div className="oa-meta">{c.time} · {c.venue} · {c.capacity} places</div>

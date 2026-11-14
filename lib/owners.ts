@@ -25,10 +25,10 @@ const KEYWORDS: Array<[RegExp, string]> = [
 ];
 
 export function imageSrc(key: string | null | undefined, title = ""): string {
-  if (key && (IMAGE_KEYS as readonly string[]).includes(key)) return `/img/${key}.jpg`;
+  if (key && (IMAGE_KEYS as readonly string[]).includes(key)) return `/img/${key}.webp`;
   if (key && /^https?:\/\//.test(key)) return key;
-  for (const [re, k] of KEYWORDS) if (re.test(title)) return `/img/${k}.jpg`;
-  return "/img/gymv.jpg";
+  for (const [re, k] of KEYWORDS) if (re.test(title)) return `/img/${k}.webp`;
+  return "/img/gymv.webp";
 }
 
 export const classImage = (c: ClassRow) => imageSrc(c.image, `${c.title} ${c.venue}`);

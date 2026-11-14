@@ -110,7 +110,7 @@ export default function BriefPage() {
       <article className="oa-card" style={{ padding: 18 }}>
         <div style={{ display: "flex", gap: 14 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="oa-av" src="/img/coach.jpg" alt="" />
+          <img loading="lazy" decoding="async" className="oa-av" src="/img/coach.webp" alt="" />
           <div style={{ minWidth: 0, flex: 1 }}>
             <div className="oa-eyebrow">Coach&rsquo;s note{latest ? ` · ${monthLabel(latest.week_start)}` : ""}</div>
             <p className="oa-note">

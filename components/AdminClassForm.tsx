@@ -24,7 +24,7 @@ export function AdminClassForm({ initial }: { initial?: ClassRow }) {
   const [duration, setDuration] = useState(initial?.duration_min ?? 60);
   const [capacity, setCapacity] = useState(initial?.capacity ?? 8);
   const [description, setDescription] = useState(initial?.description ?? "");
-  const [image, setImage] = useState(initial?.image ?? imageSrc(null, initial?.title ?? "").replace("/img/", "").replace(".jpg", ""));
+  const [image, setImage] = useState(initial?.image ?? imageSrc(null, initial?.title ?? "").replace("/img/", "").replace(".webp", ""));
   const [active, setActive] = useState(initial?.active ?? true);
 
   async function submit(e: React.FormEvent) {
