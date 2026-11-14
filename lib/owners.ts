@@ -4,7 +4,7 @@ import { madridDateOffsetISO } from "./dates";
 
 /* ---------- imagery ---------- */
 
-const IMAGE_KEYS = [
+export const IMAGE_KEYS = [
   "boxing", "gym", "gymv", "mobility", "tread", "kb", "pool",
   "sauna", "dinner", "hike", "pilates", "yoga", "tub",
 ] as const;

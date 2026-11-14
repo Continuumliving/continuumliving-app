@@ -1,22 +1,12 @@
+import Link from "next/link";
 import { AdminClassForm } from "@/components/AdminClassForm";
-import { BackButton } from "@/components/BackButton";
-import { HeroNameCard } from "@/components/HeroNameCard";
 
 export default function NewClassPage() {
   return (
-    <div className="screen">
-      <BackButton href="/admin/classes">Back to programme</BackButton>
-      <HeroNameCard
-        eyebrow="— New class"
-        title={
-          <>
-            Add to the
-            <br />
-            <em>programme.</em>
-          </>
-        }
-      />
+    <main className="oa">
+      <Link href="/admin/classes" className="oa-back">‹ Classes</Link>
+      <div><div className="oa-eyebrow">Programme</div><h1 className="oa-h1">New class</h1></div>
       <AdminClassForm />
-    </div>
+    </main>
   );
 }

@@ -25,7 +25,7 @@ export default function BriefPage() {
   const month = ms.slice(0, 7);
   const today = madridDateOffsetISO(0);
   const byId = new Map(classes.map((c) => [c.id, c]));
-  const mine = bookings.filter((b) => b.session_date.startsWith(month) && b.session_date <= today && byId.has(b.class_id));
+  const mine = bookings.filter((b) => b.session_date.startsWith(month) && b.session_date <= today && b.attended !== false && byId.has(b.class_id));
   const hi = mine.filter((b) => byId.get(b.class_id)!.intensity === "high").length;
   const lo = mine.length - hi;
   const balance = mine.length === 0 ? "—" : hi > 0 && lo > 0 && Math.abs(hi - lo) <= Math.max(2, mine.length * 0.25) ? "Ideal" : hi > lo ? "Push-heavy" : "Recovery-heavy";

@@ -26,7 +26,7 @@ export default function AccountPage() {
   const byId = new Map(classes.map((c) => [c.id, c]));
   const withClass = bookings.filter((b) => byId.has(b.class_id)).map((b) => ({ b, c: byId.get(b.class_id)! }));
   const upcoming = withClass.filter((x) => x.b.session_date >= today).sort((x, y) => (x.b.session_date + x.c.time).localeCompare(y.b.session_date + y.c.time));
-  const past = withClass.filter((x) => x.b.session_date < today).sort((x, y) => y.b.session_date.localeCompare(x.b.session_date));
+  const past = withClass.filter((x) => x.b.session_date < today && x.b.attended !== false).sort((x, y) => y.b.session_date.localeCompare(x.b.session_date));
   const month = today.slice(0, 7);
   const thisMonth = past.filter((x) => x.b.session_date.startsWith(month));
   const hiMonth = thisMonth.filter((x) => x.c.intensity === "high").length;
@@ -96,7 +96,7 @@ export default function AccountPage() {
               <div className="oa-li" key={b.id}>
                 <span className="oa-ib" style={{ background: c.intensity === "high" ? "var(--gold)" : "var(--lo)" }} />
                 <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 500 }}>{c.title}</div><div className="oa-meta">{formatShortDate(b.session_date)} · {c.venue}</div></div>
-                <div className="oa-meta">{c.duration_min} min</div>
+                <div className="oa-meta">{b.attended === true ? "✓ " : ""}{c.duration_min} min</div>
               </div>
             ))}
           </div>

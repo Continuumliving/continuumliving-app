@@ -49,6 +49,7 @@ export interface BookingRow {
   class_id: string;
   session_date: string; // yyyy-mm-dd
   created_at: string;
+  attended?: boolean | null;
 }
 
 export interface EventRow {

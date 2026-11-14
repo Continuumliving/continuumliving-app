@@ -1247,3 +1247,30 @@ body { background: var(--paper); }
 .oa-duo .oa-label { min-width: 0; }
 .oa .oa-withdraw { align-self: center; font-size: 12px; color: var(--mute); text-decoration: underline; text-underline-offset: 3px; padding: 8px; }
 .oa, .oa * { font-variant-numeric: lining-nums; }
+
+/* ---------- admin forms ---------- */
+.oa-seg { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; }
+.oa-seg.wrap { flex-wrap: wrap; }
+.oa .oa-seg button { flex: 1; min-width: 44px; padding: 10px 8px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; color: var(--ink); text-align: center; letter-spacing: 0; }
+.oa .oa-seg button.on { background: var(--navy); color: #f3eee4; border-color: var(--navy); }
+.oa-picker { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.oa .oa-picker button { aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid transparent; padding: 0; }
+.oa .oa-picker button.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--paper) inset; }
+.oa-picker img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.oa-check { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--ink); }
+.oa-check input { width: 20px; height: 20px; accent-color: var(--gold-d); }
+.oa-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.oa-tile { padding: 16px; display: flex; flex-direction: column; gap: 6px; min-height: 104px; position: relative; }
+.oa-tile .t { font-size: 17px; font-weight: 500; }
+.oa-tile .s { font-size: 12.5px; color: var(--mute); line-height: 1.4; }
+.oa-tile.oa-dark .s { color: #cfcac0; }
+.oa-tile .oa-badge { position: absolute; top: 12px; right: 12px; }
+.oa-att { display: flex; gap: 6px; }
+.oa .oa-att button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); font-size: 16px; color: var(--mute); text-align: center; }
+.oa .oa-att button.yes.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+.oa .oa-att button.no.on { background: #9a5b4e; border-color: #9a5b4e; color: #fff; }
+.oa .oa-label { text-transform: uppercase; letter-spacing: .12em; font-size: 11px; }
+.oa .oa-seg { overflow: visible; }
+.oa .oa-seg button { min-width: 0; padding: 10px 2px; text-transform: none; letter-spacing: 0; }
+.oa .oa-check { text-transform: none; letter-spacing: 0; font-size: 15px; }
+.oa .oa-check input { appearance: auto; -webkit-appearance: checkbox; width: 20px; height: 20px; padding: 0; border: 0; margin: 0; flex: none; }
