@@ -152,13 +152,18 @@ export function useEventCounts(): EventCounts {
  * these instead of refetching the lists.
  */
 export function useDataMutations() {
-  const { mutate } = useSWRConfig();
+  const { mutate, fallback } = useSWRConfig();
+  // With SWRConfig `fallback`, the cache starts empty, so `current` is
+  // undefined until the first fetch. Fall back to the server-provided
+  // data so an optimistic update never drops existing rows.
+  const base = <T,>(key: string, current: T[] | undefined): T[] =>
+    current ?? ((fallback as Record<string, unknown>)?.[key] as T[] | undefined) ?? [];
 
   return {
     addBooking(row: BookingRow) {
       mutate(
         KEY.bookings,
-        (current: BookingRow[] | undefined) => [...(current ?? []), row],
+        (current: BookingRow[] | undefined) => [...base(KEY.bookings, current), row],
         { revalidate: false },
       );
       // session_history is appended by a DB trigger — the safest path
@@ -170,7 +175,7 @@ export function useDataMutations() {
       mutate(
         KEY.bookings,
         (current: BookingRow[] | undefined) =>
-          (current ?? []).filter((b) => b.id !== id),
+          base(KEY.bookings, current).filter((b) => b.id !== id),
         { revalidate: false },
       );
       mutate(KEY.history);
@@ -179,7 +184,7 @@ export function useDataMutations() {
     addRsvp(row: EventRsvpRow) {
       mutate(
         KEY.rsvps,
-        (current: EventRsvpRow[] | undefined) => [...(current ?? []), row],
+        (current: EventRsvpRow[] | undefined) => [...base(KEY.rsvps, current), row],
         { revalidate: false },
       );
       mutate(KEY.eventCounts);
@@ -188,7 +193,7 @@ export function useDataMutations() {
       mutate(
         KEY.rsvps,
         (current: EventRsvpRow[] | undefined) =>
-          (current ?? []).filter((r) => r.id !== id),
+          base(KEY.rsvps, current).filter((r) => r.id !== id),
         { revalidate: false },
       );
       mutate(KEY.eventCounts);

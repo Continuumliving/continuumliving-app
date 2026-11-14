@@ -117,6 +117,10 @@ export default async function AdminIndex() {
         intro="A live read of residents, the weekly programme, and the seasonal calendar."
       />
 
+      <Link href="/admin/messages" className="btn" style={{ margin: "8px 0 18px" }}>
+        Coach inbox · messages from residents
+      </Link>
+
       {/* ── Topline ── */}
       <div className="section-lead">
         <div className="eyebrow">— Topline</div>

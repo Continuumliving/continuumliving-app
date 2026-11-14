@@ -37,7 +37,7 @@ export function getBrowserClient() {
     );
   }
 
-  if (!/^https:\/\/.+\.supabase\.co\/?$/.test(url!)) {
+  if (!/^https:\/\/.+\.supabase\.co\/?$/.test(url!) && !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(url!)) {
     throw new Error(
       `NEXT_PUBLIC_SUPABASE_URL does not look like a Supabase URL: "${url}". Expected https://<project>.supabase.co`,
     );

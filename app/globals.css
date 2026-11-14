@@ -1170,3 +1170,20 @@ body { background: var(--paper); }
 .auth-screen .field { margin-bottom: 16px; }
 .auth-screen .btn, .auth-screen .btn-terracotta { background: var(--navy) !important; color: #f6f2ea !important; border-radius: 999px; font-size: 12px; letter-spacing: .22em; padding: 16px; margin-top: 6px; }
 .auth-footer a, .auth-footer button { color: var(--gold-d) !important; }
+
+/* ---------- coach chat ---------- */
+.oa-chat { padding-bottom: 150px; }
+.oa-thread { display: flex; flex-direction: column; gap: 4px; padding-top: 6px; }
+.oa-bubble-row { display: flex; flex-direction: column; align-items: flex-start; max-width: 82%; margin-top: 6px; }
+.oa-bubble-row.me { align-self: flex-end; align-items: flex-end; }
+.oa-bubble-head { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mute); letter-spacing: .04em; margin: 8px 0 4px; }
+.oa-bubble-head img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.oa-bubble { background: var(--card); padding: 11px 15px; border-radius: 18px 18px 18px 6px; font-size: 15.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; box-shadow: 0 6px 16px -14px rgba(21,24,31,.5); }
+.oa-bubble.me { background: var(--navy); color: #f3eee4; border-radius: 18px 18px 6px 18px; }
+.oa-bubble-time { font-size: 11px; color: var(--mute); margin-top: 4px; letter-spacing: .03em; }
+.oa-compose { position: fixed; left: 0; right: 0; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; gap: 10px; align-items: flex-end; padding: 10px max(16px, calc((100vw - 480px) / 2 + 16px)); background: linear-gradient(0deg, var(--paper) 70%, rgba(246,242,234,0)); }
+.oa-compose textarea { flex: 1; resize: none; border: 1px solid var(--line); background: var(--card); border-radius: 22px; padding: 12px 16px; font: inherit; font-size: 16px; line-height: 1.35; max-height: 140px; color: var(--ink); field-sizing: content; }
+.oa-compose textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.oa-send { width: 46px; height: 46px; border-radius: 50%; background: var(--navy); color: var(--gold); display: grid; place-items: center; flex: none; border: 0; cursor: pointer; }
+.oa-send[disabled] { opacity: .4; cursor: default; }
+.oa-badge { min-width: 22px; height: 22px; border-radius: 11px; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 500; display: grid; place-items: center; padding: 0 6px; }
